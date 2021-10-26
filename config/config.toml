@@ -1,0 +1,96 @@
+# HTTP Server
+[server]
+	Address     = ":8199"
+	ServerRoot  = "public"
+	ServerAgent = "gf-app"
+    #服务
+	logPath             = "/tmp/log/gf-app"                 # 日志文件存储目录路径，建议使用绝对路径。默认为空，表示关闭
+    logStdout           = false               # 日志是否输出到终端。默认为true
+    errorStack          = true               # 当Server捕获到异常时是否记录堆栈信息到日志中。默认为true
+    errorLogEnabled     = true               # 是否记录异常日志信息到日志中。默认为true
+    errorLogPattern     = "error-{Ymd}.log"  # 异常错误日志文件格式。默认为"error-{Ymd}.log"
+    accessLogEnabled    = true              # 是否记录访问日志。默认为false
+    accessLogPattern    = "access-{Ymd}.log" # 访问日志文件格式。默认为"access-{Ymd}.log"
+    # Sessions配置
+    sessionMaxAge       = "24h"              # Session有效期。默认为24小时
+    sessionIdName       = "gfsessionid"      # SessionId的键名名称。默认为gfsessionid
+    sessionCookieOutput = true               # Session特性开启时，是否将SessionId返回到Cookie中。默认true
+#   sessionPath         = "/tmp/gsessions"   # Session存储的文件目录路径。默认为当前系统临时目录下的gsessions目录
+
+    dumpRouterMap = false
+
+# Logger.
+[logger]
+    Path        = "/tmp/log/gf-app"
+    prefix      = ""
+    Level       = "all"
+    Stdout      = true
+#     header      = false
+#      CtxKeys =   ["TraceID"]
+    [logger.info]
+            path   = "/tmp/log/gf-app/biz"
+            file   = "{Y-m-d}.log" # 日志
+            level  = "info"
+            stdout = false
+    [logger.error]
+            path   = "/tmp/log/gf-app/biz"
+            file   = "error-{Y-m-d}.log" # 日志
+            level  = "error"
+            stdout = true
+# Template.
+[viewer]
+    Path        = "template"
+    DefaultFile = "index.html"
+    Delimiters  = ["{{", "}}"]
+    autoncode   = true
+
+# Database.
+[database]
+# 	type = "MyDriver"
+    link  = "mysql:write:write@tcp(43.247.184.35:8899)/relation"
+    debug = true
+    timeMaintainDisabled = false
+    # Database logger.
+    [database.logger]
+        Path   = "/tmp/log/gf-app/sql"
+        Level  = "all"
+        Stdout = true
+
+[redis]
+#    default = "192.168.4.119:6379,1,root@123456?idleTimeout=600"
+    default = "59.110.125.77:30479,5,havzMSYc3aBZXOjpG3?idleTimeout=600"
+    cache   = "192.168.4.119:6379,1,123456?idleTimeout=600"
+[path2Model]
+   project= "Project"
+   user = "User"
+   userdetail = "UserDetail"
+   userscore = "UserScore"
+   codegen = "CodeGen"
+   initdata = "InitData"
+[model2Tbl]
+   Project="project"
+   User = "user"
+   UserDetail = "user_detail"
+   UserScore = "user_score"
+[gfcli]
+    [gfcli.build]
+        name     = "my-application"
+        arch     = "amd64"
+        system   = "linux"
+        mod      = "none"
+        cgo      = 0
+        pack     = "config,i18n,public,template"
+        version  = ""
+        output   = "./bin"
+        extra    = ""
+
+    [[gfcli.gen.dao]]
+        link     = "mysql:write:write@tcp(43.247.184.35:8899)/relation"
+        path   = "./app"
+        jsonCase = "CamelLower"
+
+[codegen]
+apiPath = "/home/jy/dev/backend/gows/src/gfwebtest/app/api/"
+servicePath = "/home/jy/dev/backend/gows/src/gfwebtest/app/service/"
+daoPath = "/home/jy/dev/backend/gows/src/gfwebtest/app/dao/"
+modelPath = "/home/jy/dev/backend/gows/src/gfwebtest/app/model/"
