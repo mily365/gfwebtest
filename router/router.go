@@ -24,6 +24,7 @@ func init() {
 			nummds := midobjValue.NumMethod()
 			var funcs []func(*ghttp.Request)
 			for n := 0; n < nummds; n++ {
+				//隐式类型转换为eface,valueOf-iface-->任何一个成员都会转换为eface,需要进行断言类型转换
 				funcs = append(funcs, midobjValue.Method(n).Interface().(func(*ghttp.Request)))
 			}
 			s.BindMiddleware(mstr, funcs...)

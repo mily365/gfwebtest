@@ -59,7 +59,7 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 
 	} else {
 
-		apppSuccessRtn(rtn, "call success!", r)
+		app.WrapSuccessRtn(rtn, "call success!", r)
 	}
 
 }
