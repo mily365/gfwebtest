@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"gfwebtest/app"
-	"gfwebtest/app/model"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/guid"
+	"xpass/app"
+	"xpass/app/model"
 
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/util/gmeta"
@@ -52,7 +52,6 @@ func (*all) Ctx(r *ghttp.Request) {
 		}
 	}
 	r.SetCtxVar(app.ContextInfoKey, contextInfo)
-	//record access
-	app.LoggerWithCtx(r.Context()).Info(r.GetRequestMap())
+
 	r.Middleware.Next()
 }

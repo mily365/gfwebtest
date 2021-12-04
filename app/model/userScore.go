@@ -1,17 +1,18 @@
-
 package model
-import "gfwebtest/app"
-func NewUserScore() interface{}{
+
+import "xpass/app"
+
+func NewUserScore() interface{} {
 	var userScore *UserScore
 	return &userScore
 }
-func NewUserScores() interface{}{
+func NewUserScores() interface{} {
 	var userScores []*UserScore
 	return &userScores
 }
 func init() {
-	fun:=NewUserScore
-	funs:=NewUserScores
+	fun := NewUserScore
+	funs := NewUserScores
 	app.TypePointerFuncFactory.RegisterOrGetTypePointer("userScore", fun)
 	app.TypePointerFuncFactory.RegisterOrGetTypePointer("userScores", funs)
 }

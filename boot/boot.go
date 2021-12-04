@@ -1,17 +1,17 @@
 package boot
 
 import (
-	_ "gfwebtest/app/dao/driver"
+	_ "xpass/app/dao/driver"
 
-	_ "gfwebtest/app/dao/base"
+	_ "xpass/app/dao/base"
 
-	_ "gfwebtest/app/dao"
+	_ "xpass/app/dao"
 
-	_ "gfwebtest/app/service/base"
+	_ "xpass/app/service/base"
 
-	_ "gfwebtest/app/service"
+	_ "xpass/app/service"
 
-	_ "gfwebtest/packed"
+	_ "xpass/packed"
 )
 
 func init() {

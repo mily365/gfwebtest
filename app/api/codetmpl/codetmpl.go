@@ -1,12 +1,12 @@
 package codetmpl
 
-var(
-	ApiTmpl=`
+var (
+	ApiTmpl = `
 package api
 
 import (
-	"gfwebtest/app"
-	"gfwebtest/app/api/base"
+	"xpass/app"
+	"xpass/app/api/base"
 	"github.com/gogf/gf/util/gmeta"
 )
 
@@ -22,9 +22,9 @@ func init()  {
 	app.AppContext.RegisterObj({{.exportModelName}}Api)
 }
 `
-	ModelTmpl=`
+	ModelTmpl = `
 package model
-import "gfwebtest/app"
+import "xpass/app"
 func New{{.exportModelName}}() interface{}{
 	var {{.modelName}} *{{.exportModelName}}
 	return &{{.modelName}}
@@ -40,13 +40,13 @@ func init() {
 	app.TypePointerFuncFactory.RegisterOrGetTypePointer("{{.modelName}}s", funs)
 }
 `
-	ServiceTmpl=`
+	ServiceTmpl = `
 package service
 
 import (
-	"gfwebtest/app"
+	"xpass/app"
 
-	"gfwebtest/app/service/base"
+	"xpass/app/service/base"
 	"github.com/gogf/gf/util/gmeta"
 )
 var(
@@ -62,12 +62,12 @@ func init() {
 }
 
 `
-	DaoTmpl=`
+	DaoTmpl = `
 package dao
 
 import (
-	"gfwebtest/app"
-	"gfwebtest/app/dao/base"
+	"xpass/app"
+	"xpass/app/dao/base"
 	"github.com/gogf/gf/util/gmeta"
 )
 var(

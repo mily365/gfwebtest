@@ -60,6 +60,13 @@
 #    default = "192.168.4.119:6379,1,root@123456?idleTimeout=600"
     default = "59.110.125.77:30479,5,havzMSYc3aBZXOjpG3?idleTimeout=600"
     cache   = "192.168.4.119:6379,1,123456?idleTimeout=600"
+
+[appInfo]
+    name="paas"
+
+[esConfig]
+
+
 [path2Model]
    project= "Project"
    user = "User"
@@ -90,7 +97,7 @@
         jsonCase = "CamelLower"
 
 [codegen]
-apiPath = "/home/jy/dev/backend/gows/src/gfwebtest/app/api/"
-servicePath = "/home/jy/dev/backend/gows/src/gfwebtest/app/service/"
-daoPath = "/home/jy/dev/backend/gows/src/gfwebtest/app/dao/"
-modelPath = "/home/jy/dev/backend/gows/src/gfwebtest/app/model/"
+apiPath = "/home/jy/dev/backend/gows/src/xpass/app/api/"
+servicePath = "/home/jy/dev/backend/gows/src/xpass/app/service/"
+daoPath = "/home/jy/dev/backend/gows/src/xpass/app/dao/"
+modelPath = "/home/jy/dev/backend/gows/src/xpass/app/model/"

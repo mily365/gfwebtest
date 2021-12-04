@@ -2,13 +2,13 @@ package codetmpl
 
 import (
 	"fmt"
-	"gfwebtest/app"
-	"gfwebtest/app/api/base"
-	"gfwebtest/app/model"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/util/gmeta"
+	"xpass/app"
+	"xpass/app/api/base"
+	"xpass/app/model"
 )
 
 type initDataApi struct {

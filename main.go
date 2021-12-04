@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "gfwebtest/boot"
+	_ "xpass/boot"
 
-	_ "gfwebtest/router"
+	_ "xpass/router"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"

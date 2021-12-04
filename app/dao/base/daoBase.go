@@ -2,14 +2,14 @@ package base
 
 import (
 	"encoding/json"
-	"gfwebtest/app"
-	"gfwebtest/app/model"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
 	"sort"
+	"xpass/app"
+	"xpass/app/model"
 
 	"context"
 )
@@ -17,15 +17,27 @@ import (
 type DaoBase struct {
 }
 
+func getModelName(search g.Map, ctx context.Context) string {
+	var modelName string = ""
+	//路径映射优先
+	modelNameFromPath := ctx.Value(app.PathModelName).(string)
+	if search["model"] != nil {
+		modelName = search["model"].(string)
+	} else {
+		modelName = modelNameFromPath
+	}
+	if modelName == "" {
+		panic("please input model query param..")
+	}
+	return modelName
+}
+
 func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	rtn := new(model.SearchResult)
 	search := i.(g.Map)
 	//main model
-	modelName := search["model"]
-	if modelName == nil {
-		panic("please input modelwithrelation query param..")
-	}
-	modelKey := gstr.CaseCamelLower(modelName.(string))
+	modelName := getModelName(search, ctx)
+	modelKey := gstr.CaseCamelLower(modelName)
 	//fetch combined entity
 	sp := app.TypePointerFuncFactory.GetStructArrayPointer(modelKey)
 	metadata := gmeta.Data(sp)
@@ -101,21 +113,19 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	app.Logger.Debug("dao all called......")
 	rtn := new(model.SearchResult)
 	search := i.(g.Map)
-	modelName := search["model"]
-
+	modelName := getModelName(search, ctx)
 	var sp interface{}
 	var um *gdb.Model
 	app.Logger.Debug("dao all called......xxxxxxx")
-	if modelName == nil {
-		panic("please input model query param..")
-	}
 
-	modelKey := gstr.CaseCamelLower(modelName.(string))
-	searchTable := g.Config().Get("model2Tbl." + modelName.(string))
+	//首字母小写，约定模型工厂的ke
+	modelKey := gstr.CaseCamelLower(modelName)
+	searchTable := g.Config().Get("model2Tbl." + modelName)
 	if searchTable == nil {
 		panic("please config model2table..")
 	}
-
+	app.Logger.Debug(modelKey, "xxxxxxxxxxxxxxxxxxxxxxxxxxx")
+	//约定类型函数工厂的key取实体的首字母小写
 	sp = app.TypePointerFuncFactory.GetStructArrayPointer(modelKey)
 	um = app.ModelFactory.GetModel(searchTable.(string))
 

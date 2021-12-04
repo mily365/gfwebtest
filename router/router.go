@@ -1,16 +1,16 @@
 package router
 
 import (
-	"gfwebtest/app"
-	_ "gfwebtest/app/api/base"
-	_ "gfwebtest/app/api/codetmpl"
+	"xpass/app"
+	_ "xpass/app/api/base"
+	_ "xpass/app/api/codetmpl"
 
-	_ "gfwebtest/app/api"
-	_ "gfwebtest/app/api/middleware"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
 	"reflect"
+	_ "xpass/app/api"
+	_ "xpass/app/api/middleware"
 )
 
 func init() {
@@ -20,6 +20,7 @@ func init() {
 		if gstr.HasPrefix(v, "middle") {
 			strarray := gstr.Split(v, ".")
 			mstr := "/" + gstr.Join(strarray[1:], "/")
+			app.Logger.Debug(mstr, "vvvvvvvvvvvvvvvvvvvvvv")
 			midobjValue := reflect.ValueOf(app.AppContext.Get(v))
 			nummds := midobjValue.NumMethod()
 			var funcs []func(*ghttp.Request)

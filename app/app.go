@@ -14,7 +14,9 @@ import (
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
 	"reflect"
+	"time"
 )
+import elastic "github.com/olivere/elastic/v7"
 
 type AppError struct {
 	Code int         `json:"code"`
@@ -109,7 +111,33 @@ var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.Handler
 
 }
 
-//----------------------------------------
+//--------------es的客户端工厂----------------------------
+
+var esClientFactory = esFactory{}
+
+type esFactory struct {
+	client *elastic.Client
+}
+
+func GetEsFactory() esFactory {
+	clt, err := elastic.NewClient(
+		elastic.SetURL("http://es.gongsibao.com:7200"),
+		elastic.SetSniff(false),
+		elastic.SetHealthcheckInterval(30*time.Second),
+		elastic.SetMaxRetries(5),
+		//elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
+		//elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
+		elastic.SetBasicAuth("admines", "adminGSB"))
+	if err != nil {
+		panic(err.Error())
+	} else {
+		esClientFactory.client = clt
+	}
+	return esClientFactory
+}
+
+//client, err := NewClient(SetBasicAuth("user", "secret"))
+//---------------mysql的模型工厂-------------------------
 type modelFactory struct {
 	*gmap.StrAnyMap
 }

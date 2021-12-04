@@ -2,13 +2,13 @@ package codetmpl
 
 import (
 	"context"
-	"gfwebtest/app"
-	"gfwebtest/app/api/base"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gmeta"
+	"xpass/app"
+	"xpass/app/api/base"
 )
 
 type codeGenApi struct {

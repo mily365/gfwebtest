@@ -1,24 +1,24 @@
 package api
 
 import (
-	"gfwebtest/app"
+	"xpass/app"
 
-	"gfwebtest/app/api/base"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/util/gmeta"
+	"xpass/app/api/base"
 )
-
 
 type uploadApi struct {
 	gmeta.Meta `path:"api.upload"`
 	base.ApiBase
 }
+
 var (
 	Upload *uploadApi
 )
 
-func init()  {
-	Upload=&uploadApi{gmeta.Meta{},base.ApiBase{}}
+func init() {
+	Upload = &uploadApi{gmeta.Meta{}, base.ApiBase{}}
 	app.AppContext.RegisterObj(Upload)
 }
 
@@ -39,5 +39,3 @@ func (*uploadApi) UploadShow(r *ghttp.Request) {
 func (*uploadApi) UploadShowBatch(r *ghttp.Request) {
 	r.Response.WriteTpl("upload/multiupload.html")
 }
-
-

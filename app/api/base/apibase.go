@@ -1,9 +1,9 @@
 package base
 
 import (
-	"gfwebtest/app"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"xpass/app"
 )
 
 type ApiBase struct {
