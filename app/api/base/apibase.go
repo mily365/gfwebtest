@@ -10,6 +10,14 @@ type ApiBase struct {
 	Sve interface{}
 }
 
+func (p *ApiBase) Scrollpage(r *ghttp.Request) {
+	g.Log().Debug("Scrollpage alls....")
+	q := r.GetRequestMap()
+	s := p.Sve.(app.CommonOperation).Scrollpage(r.Context(), q)
+	app.WrapSuccessRtn(s, "ok", r)
+
+}
+
 func (p *ApiBase) Withalls(r *ghttp.Request) {
 	g.Log().Debug("Withalls alls....")
 	q := r.GetRequestMap()
@@ -54,7 +62,7 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 	toUpdate := r.GetRequestMap()
 	rtn := p.Sve.(app.CommonOperation).Update(r.Context(), toUpdate)
 	if rtn != nil {
-		appE := app.ErrorOfApp{Msg: "update concurrent.....", Code: 1, Ext: rtn}
+		appE := app.AppError{Msg: "update concurrent.....", Code: 1, Ext: rtn}
 		app.WrapFailRtn(appE, "has error!", r)
 
 	} else {

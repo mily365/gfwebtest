@@ -2,6 +2,7 @@ package base
 
 import (
 	"context"
+	"github.com/gogf/gf/frame/g"
 	"xpass/app"
 )
 
@@ -11,6 +12,10 @@ type ServiceBase struct {
 
 func (s *ServiceBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	return s.Dao.(app.CommonOperation).Withalls(ctx, i)
+}
+func (s *ServiceBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
+	g.Log().Debug("service Scrollpage")
+	return s.Dao.(app.CommonOperation).Scrollpage(ctx, i)
 }
 func (s *ServiceBase) All(ctx context.Context, i interface{}) interface{} {
 	return s.Dao.(app.CommonOperation).All(ctx, i)

@@ -31,7 +31,17 @@ func getModelName(search g.Map, ctx context.Context) string {
 	}
 	return modelName
 }
+func (s *DaoBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
+	search := i.(g.Map)
+	//main model
+	modelName := getModelName(search, ctx)
+	app.Logger.Debug("dao scrollpage....", gstr.CaseCamelLower(modelName))
 
+	res := app.GetEsFactory().ScrollPage(ctx, search, gstr.CaseCamelLower(modelName))
+	app.Logger.Debug("dao scrollpage...vvvvv.")
+	g.Dump(res)
+	return nil
+}
 func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	rtn := new(model.SearchResult)
 	search := i.(g.Map)
@@ -158,6 +168,9 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 		panic(e.Error())
 	}
 	g.Dump(rt)
+	//计入es
+	res := app.GetEsFactory().Create(ctx, gconv.String(rid), i, modelKey)
+	g.Dump(res)
 	return rt
 }
 

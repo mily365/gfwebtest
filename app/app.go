@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"encoding/json"
 	"github.com/gogf/gf/container/gmap"
 	"github.com/gogf/gf/frame/g"
@@ -21,45 +20,23 @@ var (
 	}
 )
 
-type ErrorOfApp struct {
+type AppError struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Ext  interface{} `json:"ext"`
 }
 
-func (receiver *ErrorOfApp) Error() string {
+func (receiver *AppError) Error() string {
 	return receiver.Msg
 }
-func (receiver *ErrorOfApp) Extra() interface{} {
+func (receiver *AppError) Extra() interface{} {
 	return receiver.Ext
-}
-
-// ApiOperation all api implement  this interface
-type ApiOperation interface {
-	All(r *ghttp.Request)
-	Withalls(r *ghttp.Request)
-	Create(r *ghttp.Request)
-	Update(r *ghttp.Request)
-	Delete(r *ghttp.Request)
-}
-
-// CommonOperation all service implement this interface
-type CommonOperation interface {
-	All(context.Context, interface{}) interface{}
-	Withalls(context.Context, interface{}) interface{}
-	Create(context.Context, interface{}) interface{}
-	Update(context.Context, interface{}) interface{}
-	Delete(context.Context, interface{}) interface{}
 }
 
 type RegisterRes struct {
 	Code  int         `json:"code"`
 	Error string      `json:"error"`
 	Data  interface{} `json:"data"`
-}
-
-type SetRef interface {
-	SetRef(ref interface{})
 }
 
 //-------------------context info----------------------
