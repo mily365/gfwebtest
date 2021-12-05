@@ -63,9 +63,13 @@
 
 [appInfo]
     name="paas"
-
 [esConfig]
-
+    urls = ["http://192.168.4.110:9200"]
+    userName = "elastic"
+    pwd = "elastic"
+    isSniff = false
+    healthCheckInterval = 30
+    maxRetries = 5
 
 [path2Model]
    project= "Project"

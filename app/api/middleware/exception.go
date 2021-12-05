@@ -25,8 +25,7 @@ type exp struct {
 
 func (*exp) ExceptionHandler(r *ghttp.Request) {
 	//记录请求参数和访问的地址toes，进入es
-	app.LoggerWithCtx(r.Context()).Info(r.GetRequestMap())
-
+	app.LoggerWithCtx(r.Context()).Info(g.Map{"accsessPath": r.URL.Path, "reqParams": r.GetRequestMap()})
 	r.Middleware.Next()
 	if err := r.GetError(); err != nil {
 		// 记录到自定义错误日志文件,写入ES

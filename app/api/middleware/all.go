@@ -30,6 +30,7 @@ func (*all) MiddlewareCORS(r *ghttp.Request) {
 }
 
 func (*all) Ctx(r *ghttp.Request) {
+
 	if gstr.Contains(r.URL.Path, "api") {
 		modelNameLower := gstr.Split(r.URL.Path, "/")[2]
 		modelNme := g.Config().Get("path2Model." + gstr.ToLower(modelNameLower))
@@ -38,6 +39,7 @@ func (*all) Ctx(r *ghttp.Request) {
 		}
 		////model type reg key
 		r.SetCtxVar(app.PathModelName, gstr.CaseCamelLower(modelNme.(string)))
+
 	}
 	//set traceid
 	r.SetCtxVar(app.TraceID, guid.S())

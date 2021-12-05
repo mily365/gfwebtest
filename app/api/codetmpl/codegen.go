@@ -25,6 +25,13 @@ func init() {
 	app.AppContext.RegisterObj(CodeGenApi)
 }
 
+func (cg *codeGenApi) Pinges(r *ghttp.Request) {
+	g.Log().Debug("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+	niF, _ := app.GetEsFactory().Client.NodesInfo().Do(r.Context())
+	g.Dump(niF)
+	app.WrapSuccessRtn(niF, "ok", r)
+}
+
 func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 	pm := r.GetRequestMap()
 	if pm["model"] == nil {

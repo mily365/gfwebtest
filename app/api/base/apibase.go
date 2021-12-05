@@ -54,7 +54,7 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 	toUpdate := r.GetRequestMap()
 	rtn := p.Sve.(app.CommonOperation).Update(r.Context(), toUpdate)
 	if rtn != nil {
-		appE := app.AppError{Msg: "update concurrent.....", Code: 1, Ext: rtn}
+		appE := app.ErrorOfApp{Msg: "update concurrent.....", Code: 1, Ext: rtn}
 		app.WrapFailRtn(appE, "has error!", r)
 
 	} else {

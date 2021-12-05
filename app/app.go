@@ -3,31 +3,34 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/gogf/gf/container/gmap"
-	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
-	"github.com/gogf/gf/util/gmeta"
-	"reflect"
-	"time"
 )
-import elastic "github.com/olivere/elastic/v7"
 
-type AppError struct {
+var (
+	AppContext = objectFactory{
+		gmap.NewStrAnyMap(true),
+	}
+	ModelFactory = modelFactory{
+		gmap.NewStrAnyMap(true),
+	}
+	TypePointerFuncFactory = typePointerFuncFactory{
+		make(map[string]func() interface{}),
+	}
+)
+
+type ErrorOfApp struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Ext  interface{} `json:"ext"`
 }
 
-func (receiver *AppError) Error() string {
+func (receiver *ErrorOfApp) Error() string {
 	return receiver.Msg
 }
-func (receiver *AppError) Extra() interface{} {
+func (receiver *ErrorOfApp) Extra() interface{} {
 	return receiver.Ext
 }
 
@@ -49,222 +52,14 @@ type CommonOperation interface {
 	Delete(context.Context, interface{}) interface{}
 }
 
-var (
-	AppContext = objectFactory{
-		gmap.NewStrAnyMap(true),
-	}
-	ModelFactory = modelFactory{
-		gmap.NewStrAnyMap(true),
-	}
-	TypePointerFuncFactory = typePointerFuncFactory{
-		make(map[string]func() interface{}),
-	}
-)
-
-// Logger ----------------------------------
-var Logger = g.Log()
-
-func LoggerWithCtx(ctx context.Context) *glog.Logger {
-	Logger.SetHandlers(LoggingJsonHandler)
-	return Logger.Ctx(ctx)
-}
-
-// JsonOutputsForLogger LoggingJsonHandler is a example handler for logging JSON format content.
-type JsonOutputsForLogger struct {
-	TraceId string `json:"traceId"`
-	Time    string `json:"time"`
-	Level   string `json:"level"`
-	Content string `json:"content"`
-}
-
-var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.HandlerInput) {
-	if ctx.Value(TraceID) != nil {
-		jsonForLogger := JsonOutputsForLogger{
-			TraceId: ctx.Value(TraceID).(string),
-			Time:    in.TimeFormat,
-			Level:   gstr.Trim(in.LevelFormat, "[]"),
-			Content: gstr.Trim(in.Content),
-		}
-		jsonBytes, err := json.Marshal(jsonForLogger)
-		if err != nil {
-			panic(errors.New("json log handler error!"))
-		}
-		if in.Level == glog.LEVEL_ERRO {
-			// to es error
-			fmt.Print("error.......")
-		}
-		if in.Level == glog.LEVEL_INFO {
-			// to es
-			fmt.Print("info.......")
-		}
-		in.Buffer().Write(jsonBytes)
-		//in.Buffer().WriteString("\n")
-		in.Content = string(jsonBytes)
-	}
-
-	//fmt.Println("to push es....")
-	//fmt.Println(string(jsonBytes))
-
-	//in.Content=string(jsonBytes)+"\n"
-	//to do write to es......
-	in.Next()
-
-}
-
-//--------------es的客户端工厂----------------------------
-
-var esClientFactory = esFactory{}
-
-type esFactory struct {
-	client *elastic.Client
-}
-
-func GetEsFactory() esFactory {
-	clt, err := elastic.NewClient(
-		elastic.SetURL("http://es.gongsibao.com:7200"),
-		elastic.SetSniff(false),
-		elastic.SetHealthcheckInterval(30*time.Second),
-		elastic.SetMaxRetries(5),
-		//elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
-		//elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
-		elastic.SetBasicAuth("admines", "adminGSB"))
-	if err != nil {
-		panic(err.Error())
-	} else {
-		esClientFactory.client = clt
-	}
-	return esClientFactory
-}
-
-//client, err := NewClient(SetBasicAuth("user", "secret"))
-//---------------mysql的模型工厂-------------------------
-type modelFactory struct {
-	*gmap.StrAnyMap
-}
-
-func (mf *modelFactory) GetModel(tblName string) *gdb.Model {
-	m := mf.GetOrSet(tblName, g.DB().Model(tblName)).(*gdb.Model)
-	return m.Clone()
-}
-func (mf *modelFactory) TxModelActions(tblName string, fun func(tx *gdb.TX, model *gdb.Model) (error, interface{})) (error, interface{}) {
-	tx, ex := g.DB().Begin()
-	if ex != nil {
-		panic(ex.Error())
-	}
-	m := mf.GetOrSet(tblName, g.DB().Model(tblName)).(*gdb.Model)
-	err, rt := fun(tx, m.Clone())
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		} else {
-			tx.Commit()
-		}
-	}()
-	return err, rt
-}
-
-//------------------------
-type typePointerFuncFactory struct {
-	mapFuncPointer map[string]func() interface{}
-}
-
-func (tpf *typePointerFuncFactory) RegisterOrGetTypePointer(typeName string, typeFunPointer func() interface{}) func() interface{} {
-	g.Log().Info(tpf.mapFuncPointer)
-	if tpf.mapFuncPointer[typeName] != nil {
-		return tpf.mapFuncPointer[typeName]
-	} else {
-		if typeFunPointer == nil {
-			panic("please input param typeFunPointer...or check whether generate model register code!")
-		}
-		tpf.mapFuncPointer[typeName] = typeFunPointer
-		return typeFunPointer
-	}
-}
-func (tpf *typePointerFuncFactory) GetStructPointer(explicitName string) interface{} {
-	fp := TypePointerFuncFactory.RegisterOrGetTypePointer(explicitName, nil)
-	up := fp()
-	return up
-}
-func (tpf *typePointerFuncFactory) GetStructArrayPointer(explicitName string) interface{} {
-	fp := TypePointerFuncFactory.RegisterOrGetTypePointer(explicitName+"s", nil)
-	up := fp()
-	return up
-}
-
-//-----
-
-type objectFactory struct {
-	*gmap.StrAnyMap
-}
 type RegisterRes struct {
 	Code  int         `json:"code"`
 	Error string      `json:"error"`
 	Data  interface{} `json:"data"`
 }
 
-var (
-	ApiPathPrefix      = "api"
-	ServicePathPrefix  = "service"
-	DaoPathPrefix      = "dao"
-	ApiAdapterPath     = "api.*"
-	ServiceAdapterPath = "service.*"
-	DaoAdapterPath     = "dao.*"
-)
-
 type SetRef interface {
 	SetRef(ref interface{})
-}
-
-func (of *objectFactory) getObject(path string) interface{} {
-	return of.Get(path)
-}
-func (of *objectFactory) RegisterObj(child interface{}) {
-	md := gmeta.Data(child)
-	path := md["path"].(string)
-	Logger.Debug(path, "component  register in appcontext")
-	//inject
-	//case api. inject service.
-	if gstr.HasPrefix(path, ApiPathPrefix) {
-		v := reflect.ValueOf(child).Elem().FieldByName("Sve")
-		childTypeName := reflect.TypeOf(child).String()
-		//apistruct ust contain apibase
-		if !v.CanSet() {
-			Logger.Warning("please defind Parent base.ApiBase in api struct!", path)
-			panic("please defind Parent base.ApiBase in api struct!")
-		} else {
-			spath := gstr.Replace(path, ApiPathPrefix, ServicePathPrefix)
-			daopath := gstr.Replace(path, ApiPathPrefix, DaoPathPrefix)
-			serviceObj, isExist := of.Search(spath)
-
-			if isExist {
-				serviceTypeName := reflect.TypeOf(serviceObj).String()
-				serviceValue := reflect.ValueOf(serviceObj)
-				daoRef := serviceValue.Elem().FieldByName("Dao")
-				daoObj, isDaoExist := of.Search(daopath)
-				if isDaoExist {
-					daoValue := reflect.ValueOf(daoObj)
-					daoRef.Set(daoValue)
-					Logger.Debug(path, "---", "inject", reflect.TypeOf(daoObj), "into", serviceTypeName)
-				} else {
-					daoAdapterObj := of.Get(DaoAdapterPath)
-					daoAdapterValue := reflect.ValueOf(daoAdapterObj)
-					daoRef.Set(daoAdapterValue)
-					Logger.Debug(path, "---", "inject", reflect.TypeOf(daoAdapterObj), "into", serviceTypeName)
-				}
-				v.Set(serviceValue)
-				Logger.Debug(path, "---", "inject", serviceTypeName, "into", childTypeName)
-
-			} else {
-				// not define service,use serviceAdapter
-				serviceAdapaterObj := of.Get(ServiceAdapterPath)
-				serviceValue := reflect.ValueOf(serviceAdapaterObj)
-				v.Set(serviceValue)
-				Logger.Warning(path, "---", " service not found..", "inject", reflect.TypeOf(serviceAdapaterObj), "into", reflect.TypeOf(child))
-			}
-
-		}
-	}
-	of.SetIfNotExist(path, child)
 }
 
 //-------------------context info----------------------
