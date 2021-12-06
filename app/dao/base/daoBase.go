@@ -76,18 +76,24 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 		modelname := modelnameTablekeyArray[0]
 		tablekey := modelnameTablekeyArray[1]
 
+		var orderByStrings = []string{""}
+		if search["orderBy"] != nil {
+			orderBy := search["orderBy"].([]interface{})
+			orderByStrings = gconv.SliceStr(orderBy)
+		}
+
 		searchTable := g.Config().Get("model2Tbl." + modelname)
 		if role == "a" {
 			skip, pageSize := app.PageParam(search)
 			um := app.ModelFactory.GetModel(searchTable.(string))
 			var cntM = um.Clone()
 			if search["fields"] != nil && gstr.Trim(search["fields"].(string)) != "" {
-				err := um.Fields(search["fields"]).Where(search["queryForm"]).Offset(skip).Limit(pageSize).ScanList(sp, modelname)
+				err := um.Fields(search["fields"]).Where(search["queryForm"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				if err != nil {
 					panic(err.Error())
 				}
 			} else {
-				err := um.Fields().Where(search["queryForm"]).Offset(skip).Limit(pageSize).ScanList(sp, modelname)
+				err := um.Fields().Where(search["queryForm"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				if err != nil {
 					panic(err.Error())
 				}
@@ -142,7 +148,12 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	app.Logger.Debug("dao all called......xxxxxxx")
 	var cntM = um.Clone()
 	skip, pageSize := app.PageParam(search)
-	err := um.Fields(search["fields"]).Where(search["queryForm"]).Offset(skip).Limit(pageSize).Scan(sp)
+	var orderByStrings = []string{""}
+	if search["orderBy"] != nil {
+		orderBy := search["orderBy"].([]interface{})
+		orderByStrings = gconv.SliceStr(orderBy)
+	}
+	err := um.Fields(search["fields"]).Where(search["queryForm"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
 	cnt, err := cntM.Count(search["queryForm"])
 	if sp == nil {
 		panic(err.Error())
