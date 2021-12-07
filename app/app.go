@@ -2,9 +2,11 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gogf/gf/container/gmap"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 )
 
@@ -89,6 +91,13 @@ func WrapFailRtn(d interface{}, msg string, r *ghttp.Request) RtnInfo {
 	return rtn
 }
 
+type SearchResult struct {
+	//Test       string      `json:"test" v:"required#请输入用户姓名"`
+	Total    int         `json:"total"`
+	Rows     interface{} `json:"rows"`
+	ScrollId string      `json:"scrollId"`
+}
+
 func PageParam(search g.Map) (int, int) {
 	var no int
 	var ps int
@@ -107,4 +116,11 @@ func PageParam(search g.Map) (int, int) {
 		ps = 10
 	}
 	return (no - 1) * ps, ps
+}
+
+func GetEsName(modelName string) string {
+	appName := g.Config().GetString("appInfo.name")
+	mName := gstr.ToLower(modelName)
+	esName := fmt.Sprintf("%s_%s", appName, mName)
+	return esName
 }

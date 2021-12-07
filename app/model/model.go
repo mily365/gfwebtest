@@ -26,13 +26,13 @@ type Sqlaudit struct {
 
 // User is the golang structure for table user.
 type User struct {
-	Id        uint        `orm:"id,primary" json:"id"`        //
-	Name      string      `orm:"name"       json:"name"`      //
-	Age       int         `orm:"age"       json:"age"`        //
-	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` //
-	UpdatedAt *gtime.Time `orm:"updated_at" json:"updatedAt"` //
-	DeletedAt *gtime.Time `orm:"deleted_at" json:"deletedAt"` //
-	Version   int         `orm:"version"    json:"version"`   //
+	Id        uint        `orm:"id,primary" json:"id"`                   //
+	Name      string      `orm:"name"       json:"name"`                 //
+	Age       int         `orm:"age"       json:"age"`                   //
+	CreatedAt *gtime.Time `orm:"created_at" json:"created_at"`           //
+	UpdatedAt *gtime.Time `orm:"updated_at" json:"updated_at"`           //
+	DeletedAt *gtime.Time `orm:"deleted_at" json:"deleted_at,omitempty"` //
+	Version   int         `orm:"version"    json:"version"`              //
 }
 
 // UserDetail is the golang structure for table user_detail.

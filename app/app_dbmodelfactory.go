@@ -59,3 +59,7 @@ func (tpf *typePointerFuncFactory) GetStructArrayPointer(explicitName string) in
 	up := fp()
 	return up
 }
+
+func (tpf *typePointerFuncFactory) GetFuncMapForModelPointer() map[string]func() interface{} {
+	return tpf.mapFuncPointer
+}

@@ -1,6 +1,7 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
@@ -9,9 +10,6 @@ import (
 	"github.com/gogf/gf/util/gmeta"
 	"sort"
 	"xpass/app"
-	"xpass/app/model"
-
-	"context"
 )
 
 type DaoBase struct {
@@ -32,18 +30,30 @@ func getModelName(search g.Map, ctx context.Context) string {
 	return modelName
 }
 func (s *DaoBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
+	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	//main model
 	modelName := getModelName(search, ctx)
-	app.Logger.Debug("dao scrollpage....", gstr.CaseCamelLower(modelName))
+	modelKey := gstr.CaseCamelLower(modelName)
+	app.Logger.Debug("dao scrollpage....", modelKey)
+	res := app.GetEsFactory().ScrollPage(ctx, search, modelKey)
 
-	res := app.GetEsFactory().ScrollPage(ctx, search, gstr.CaseCamelLower(modelName))
-	app.Logger.Debug("dao scrollpage...vvvvv.")
-	g.Dump(res)
-	return nil
+	rtn.ScrollId = res.ScrollId
+
+	var rows []interface{}
+	for _, hit := range res.Hits.Hits {
+		sp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+		err := json.Unmarshal(hit.Source, &sp)
+		if err != nil {
+			panic(err.Error())
+		}
+		rows = append(rows, sp)
+	}
+	rtn.Rows = rows
+	return rtn
 }
 func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
-	rtn := new(model.SearchResult)
+	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	//main model
 	modelName := getModelName(search, ctx)
@@ -127,7 +137,7 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 
 func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	app.Logger.Debug("dao all called......")
-	rtn := new(model.SearchResult)
+	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	modelName := getModelName(search, ctx)
 	var sp interface{}
@@ -175,14 +185,15 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 		panic(err.Error())
 	}
 	rt, e := um2.Where(g.Map{"id": rid}).One()
+
 	if e != nil {
 		panic(e.Error())
 	}
-	g.Dump(rt)
-	//计入es
-	res := app.GetEsFactory().Create(ctx, gconv.String(rid), i, modelKey)
+	mp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	g.Dump(rt.Json())
+	res := app.GetEsFactory().Create(ctx, gconv.String(rid), rt.Json(), modelKey)
 	g.Dump(res)
-	return rt
+	return mp
 }
 
 func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {

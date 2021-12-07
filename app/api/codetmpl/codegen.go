@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gmeta"
+	"reflect"
 	"xpass/app"
 	"xpass/app/api/base"
 )
@@ -23,6 +24,21 @@ var (
 func init() {
 	CodeGenApi = &codeGenApi{gmeta.Meta{}, base.ApiBase{}}
 	app.AppContext.RegisterObj(CodeGenApi)
+}
+
+func (cg *codeGenApi) Initesmaping(r *ghttp.Request) {
+	mapFuncModelPointer := app.TypePointerFuncFactory.GetFuncMapForModelPointer()
+	esNames := make([]string, 0)
+	for _, mfp := range mapFuncModelPointer {
+		modelPointer := mfp()
+		tpy := reflect.TypeOf(modelPointer).Elem().Elem()
+		tpyStr := tpy.Kind().String()
+		if gstr.Equal(tpyStr, "struct") {
+			eName := app.GetEsFactory().CreateIndex(r.Context(), tpy)
+			esNames = append(esNames, eName)
+		}
+	}
+	app.WrapSuccessRtn(esNames, "索引创建成功!", r)
 }
 
 func (cg *codeGenApi) Pinges(r *ghttp.Request) {

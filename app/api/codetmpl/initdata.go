@@ -25,7 +25,7 @@ func init() {
 	app.AppContext.RegisterObj(InitDataApi)
 }
 
-func (cg *initDataApi) InitData(r *ghttp.Request) {
+func (cg *initDataApi) Initdata(r *ghttp.Request) {
 	g.Log().Debug("xxxxxxxxxxxxxxxxxxxxxxxx")
 	err, _ := app.ModelFactory.TxModelActions("user", func(tx *gdb.TX, xmodel *gdb.Model) (error, interface{}) {
 		for i := 1; i <= 5; i++ {
