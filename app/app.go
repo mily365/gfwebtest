@@ -118,9 +118,9 @@ func PageParam(search g.Map) (int, int) {
 	return (no - 1) * ps, ps
 }
 
-func GetEsName(modelName string) string {
+func GetEsName(modelName string) (string, string) {
 	appName := g.Config().GetString("appInfo.name")
 	mName := gstr.ToLower(modelName)
 	esName := fmt.Sprintf("%s_%s", appName, mName)
-	return esName
+	return esName, appName
 }

@@ -40,16 +40,16 @@ func (s *DaoBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
 
 	rtn.ScrollId = res.ScrollId
 
-	var rows []interface{}
-	for _, hit := range res.Hits.Hits {
-		sp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
-		err := json.Unmarshal(hit.Source, &sp)
-		if err != nil {
-			panic(err.Error())
-		}
-		rows = append(rows, sp)
-	}
-	rtn.Rows = rows
+	//var rows []interface{}
+	//for _, hit := range res.Hits.Hits {
+	//	sp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	//	err := json.Unmarshal(hit.Source, &sp)
+	//	if err != nil {
+	//		panic(err.Error())
+	//	}
+	//	rows = append(rows, sp)
+	//}
+	rtn.Rows = app.TranEsResultToRows(res, modelKey)
 	return rtn
 }
 func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
@@ -140,12 +140,18 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	modelName := getModelName(search, ctx)
+	modelKey := gstr.CaseCamelLower(modelName)
+	if g.Config().GetBool("appInfo.enableEs") == true {
+		esRes := app.GetEsFactory().All(ctx, search, modelKey)
+		rtn.Total = int(esRes.Hits.TotalHits.Value)
+		rtn.Rows = app.TranEsResultToRows(esRes, modelKey)
+		return rtn
+	}
+
 	var sp interface{}
 	var um *gdb.Model
 	app.Logger.Debug("dao all called......xxxxxxx")
 
-	//首字母小写，约定模型工厂的ke
-	modelKey := gstr.CaseCamelLower(modelName)
 	searchTable := g.Config().Get("model2Tbl." + modelName)
 	if searchTable == nil {
 		panic("please config model2table..")
@@ -168,6 +174,7 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	if sp == nil {
 		panic(err.Error())
 	}
+
 	rtn.Rows = sp
 	rtn.Total = cnt
 	return rtn
@@ -190,9 +197,7 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 		panic(e.Error())
 	}
 	mp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
-	g.Dump(rt.Json())
-	res := app.GetEsFactory().Create(ctx, gconv.String(rid), rt.Json(), modelKey)
-	g.Dump(res)
+	app.GetEsFactory().Create(ctx, gconv.String(rid), rt.Json(), modelKey)
 	return mp
 }
 

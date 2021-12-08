@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/text/gstr"
+	"github.com/google/uuid"
 )
 
 // Logger ----------------------------------
@@ -41,9 +42,11 @@ var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.Handler
 		if in.Level == glog.LEVEL_ERRO {
 			// to es error
 			fmt.Print("error.......")
+			GetEsFactory().Create(ctx, uuid.New().String(), string(jsonBytes), "error_log")
 		}
 		if in.Level == glog.LEVEL_INFO {
 			// to es
+			GetEsFactory().Create(ctx, uuid.New().String(), string(jsonBytes), "info_log")
 			fmt.Print("info.......")
 		}
 		in.Buffer().Write(jsonBytes)

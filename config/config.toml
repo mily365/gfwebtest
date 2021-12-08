@@ -60,9 +60,9 @@
 #    default = "192.168.4.119:6379,1,root@123456?idleTimeout=600"
     default = "59.110.125.77:30479,5,havzMSYc3aBZXOjpG3?idleTimeout=600"
     cache   = "192.168.4.119:6379,1,123456?idleTimeout=600"
-
 [appInfo]
     name="paas"
+    enableEs=false
 [esConfig]
     urls = ["http://192.168.4.110:9200"]
     userName = "elastic"
