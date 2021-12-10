@@ -53,7 +53,7 @@ func (esF *esFactory) CreateIndex(ctx context.Context, modelType reflect.Type) s
 			"index_patterns": []string{appName + "*"},
 			"template": g.Map{
 				"mappings": g.Map{
-					"dynamic_date_formats": []string{"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSS"},
+					"dynamic_date_formats": []string{"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSS", "yyyy-MM-dd HH:mm:ss.SSSZ"},
 				},
 			},
 		}

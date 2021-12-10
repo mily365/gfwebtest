@@ -2,6 +2,7 @@ module xpass
 
 require (
 	github.com/gogf/gf v1.16.5
+	github.com/google/uuid v1.1.2
 	github.com/olivere/elastic/v7 v7.0.29
 )
 

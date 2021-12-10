@@ -7,33 +7,40 @@ import (
 	"fmt"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
+	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/text/gstr"
-	"github.com/google/uuid"
+	"github.com/gogf/gf/util/guid"
 )
 
 // Logger ----------------------------------
 var Logger = g.Log()
 
-func LoggerWithCtx(ctx context.Context) *glog.Logger {
+func init() {
 	Logger.SetHandlers(LoggingJsonHandler)
+}
+
+func LoggerWithCtx(ctx context.Context) *glog.Logger {
 	return Logger.Ctx(ctx)
 }
 
 // JsonOutputsForLogger LoggingJsonHandler is a example handler for logging JSON format content.
 type JsonOutputsForLogger struct {
-	TraceId string `json:"traceId"`
-	Time    string `json:"time"`
-	Level   string `json:"level"`
-	Content string `json:"content"`
+	BackendTime int64  `json:"backendTime"`
+	TraceId     string `json:"traceId"`
+	Time        string `json:"time"`
+	Level       string `json:"level"`
+	Content     string `json:"content"`
 }
 
 var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.HandlerInput) {
 	if ctx.Value(TraceID) != nil {
+		backendTime := gtime.TimestampMilli() - ctx.Value(ResponseTimeKey).(int64)
 		jsonForLogger := JsonOutputsForLogger{
-			TraceId: ctx.Value(TraceID).(string),
-			Time:    in.TimeFormat,
-			Level:   gstr.Trim(in.LevelFormat, "[]"),
-			Content: gstr.Trim(in.Content),
+			BackendTime: backendTime,
+			TraceId:     ctx.Value(TraceID).(string),
+			Time:        gtime.Now().UTC().Format("Y-m-d H:i:s.u"),
+			Level:       gstr.Trim(in.LevelFormat, "[]"),
+			Content:     gstr.Trim(in.Content),
 		}
 		jsonBytes, err := json.Marshal(jsonForLogger)
 		if err != nil {
@@ -42,11 +49,12 @@ var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.Handler
 		if in.Level == glog.LEVEL_ERRO {
 			// to es error
 			fmt.Print("error.......")
-			GetEsFactory().Create(ctx, uuid.New().String(), string(jsonBytes), "error_log")
+			GetEsFactory().Create(context.Background(), guid.S(), string(jsonBytes), "error_log")
 		}
 		if in.Level == glog.LEVEL_INFO {
 			// to es
-			GetEsFactory().Create(ctx, uuid.New().String(), string(jsonBytes), "info_log")
+			g.Dump("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+			GetEsFactory().Create(context.Background(), guid.S(), string(jsonBytes), "info_log")
 			fmt.Print("info.......")
 		}
 		in.Buffer().Write(jsonBytes)

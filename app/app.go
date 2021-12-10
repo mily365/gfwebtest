@@ -43,10 +43,11 @@ type RegisterRes struct {
 
 //-------------------context info----------------------
 var (
-	ContextInfoKey = "ContextInfoKey"
-	SessionKeyUser = "SessionKeyUser"
-	TraceID        = "TraceID"
-	PathModelName  = "PathModelName"
+	ContextInfoKey  = "ContextInfoKey"
+	SessionKeyUser  = "SessionKeyUser"
+	TraceID         = "TraceID"
+	PathModelName   = "PathModelName"
+	ResponseTimeKey = "ResponseTimeKey"
 )
 
 type ContextInfo struct {
