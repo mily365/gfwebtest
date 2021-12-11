@@ -21,20 +21,3 @@ type uploadSve struct {
 	gmeta.Meta `path:"service.upload"`
 	base.ServiceBase
 }
-
-func (*uploadSve) All(i interface{}) interface{} {
-	app.Logger.Debug("adapterSve......All", i)
-	return "all called"
-}
-
-func (*uploadSve) Create(i interface{}) interface{} {
-	panic("implement me")
-}
-
-func (*uploadSve) Update(i interface{}) interface{} {
-	panic("implement me")
-}
-
-func (*uploadSve) Delete(i interface{}) interface{} {
-	panic("implement me")
-}

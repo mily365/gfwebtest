@@ -7,13 +7,13 @@ import (
 )
 
 type ApiBase struct {
-	Sve interface{}
+	Sve app.CommonOperation
 }
 
 func (p *ApiBase) Scrollpage(r *ghttp.Request) {
 	g.Log().Debug("Scrollpage alls....")
 	q := r.GetRequestMap()
-	s := p.Sve.(app.CommonOperation).Scrollpage(r.Context(), q)
+	s := p.Sve.Scrollpage(r.Context(), q)
 	app.WrapSuccessRtn(s, "ok", r)
 
 }
@@ -21,7 +21,7 @@ func (p *ApiBase) Scrollpage(r *ghttp.Request) {
 func (p *ApiBase) Withalls(r *ghttp.Request) {
 	g.Log().Debug("Withalls alls....")
 	q := r.GetRequestMap()
-	s := p.Sve.(app.CommonOperation).Withalls(r.Context(), q)
+	s := p.Sve.Withalls(r.Context(), q)
 	app.WrapSuccessRtn(s, "ok", r)
 
 }
@@ -29,7 +29,7 @@ func (p *ApiBase) Withalls(r *ghttp.Request) {
 func (p *ApiBase) All(r *ghttp.Request) {
 	g.Log().Debug("ibase all....", r.Context().Value("tbl"))
 	q := r.GetRequestMap()
-	s := p.Sve.(app.CommonOperation).All(r.Context(), q)
+	s := p.Sve.All(r.Context(), q)
 	app.WrapSuccessRtn(s, "ok", r)
 
 }
@@ -46,7 +46,7 @@ func (p *ApiBase) Create(r *ghttp.Request) {
 		panic(err.Error())
 	}
 	toCreate := r.GetRequestMap()
-	rtn := p.Sve.(app.CommonOperation).Create(r.Context(), toCreate)
+	rtn := p.Sve.Create(r.Context(), toCreate)
 	app.WrapSuccessRtn(rtn, "ok", r)
 }
 
@@ -60,7 +60,7 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 		panic(err.Error())
 	}
 	toUpdate := r.GetRequestMap()
-	rtn := p.Sve.(app.CommonOperation).Update(r.Context(), toUpdate)
+	rtn := p.Sve.Update(r.Context(), toUpdate)
 	if rtn != nil {
 		appE := app.AppError{Msg: "update concurrent.....", Code: 1, Ext: rtn}
 		app.WrapFailRtn(appE, "has error!", r)
@@ -74,6 +74,6 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 
 func (p *ApiBase) Delete(r *ghttp.Request) {
 	toDelete := r.GetRequestMap()
-	rtn := p.Sve.(app.CommonOperation).Delete(r.Context(), toDelete)
+	rtn := p.Sve.Delete(r.Context(), toDelete)
 	app.WrapSuccessRtn(rtn, "ok", r)
 }
