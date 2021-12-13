@@ -45,6 +45,7 @@ func (ft *FlowTemplate) ParseTaskInfo() {
 //one job have muti tasks
 //作业注册 /flowsite/node1/jobs/run  /flowsite/node1/jobs/fin   /flowsite/node1/jobs/term
 type Job struct {
+	name  string
 	tasks g.Map
 }
 
@@ -67,11 +68,13 @@ func (jobCtx *JobContext) Next(nextTask string) {
 
 func NewTask(ctx JobContext, taskDescInfo TaskDescInfo) *Task {
 	task := &Task{PumpFreq: taskDescInfo.PumpFreq,
-		IsCron:  taskDescInfo.IsCron,
-		Name:    taskDescInfo.Name,
-		AndPrev: taskDescInfo.AndPrev,
-		OrPrev:  taskDescInfo.OrPrev,
-		Next:    taskDescInfo.Next,
+		IsCron:   taskDescInfo.IsCron,
+		Name:     taskDescInfo.Name,
+		AndPrev:  taskDescInfo.AndPrev,
+		OrPrev:   taskDescInfo.OrPrev,
+		Next:     taskDescInfo.Next,
+		NodeType: FlowNodeType | taskDescInfo.NodeType,
+		Status:   TaskStatus | TASK_READY,
 	}
 	return task
 }

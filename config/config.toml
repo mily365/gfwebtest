@@ -105,3 +105,18 @@ apiPath = "/home/jy/dev/backend/gows/src/xpass/app/api/"
 servicePath = "/home/jy/dev/backend/gows/src/xpass/app/service/"
 daoPath = "/home/jy/dev/backend/gows/src/xpass/app/dao/"
 modelPath = "/home/jy/dev/backend/gows/src/xpass/app/model/"
+
+
+
+[workflow]
+[[flows]]
+ name = "testflow1"
+ [[flows.tasks]]
+   Name=""
+   NodeType = 2
+   MetaPath=""
+ [[flows.tasks]]
+   Name=""
+   NodeType = 4
+   MetaPath=""
+[[flows]]

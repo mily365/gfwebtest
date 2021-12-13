@@ -1,6 +1,8 @@
 package boot
 
 import (
+	_ "xpass/packed"
+
 	_ "xpass/app/dao/driver"
 
 	_ "xpass/app/dao/base"
@@ -10,8 +12,6 @@ import (
 	_ "xpass/app/service/base"
 
 	_ "xpass/app/service"
-
-	_ "xpass/packed"
 )
 
 func init() {
