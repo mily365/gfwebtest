@@ -41,8 +41,21 @@ func (*all) Ctx(r *ghttp.Request) {
 		r.SetCtxVar(app.PathModelName, gstr.CaseCamelLower(modelNme.(string)))
 
 	}
-	//set traceid
-	r.SetCtxVar(app.TraceID, guid.S())
+	//set traceidf
+	app.Logger.Info("===============================================")
+
+	for k, v := range r.Header {
+		app.Logger.Info(k)
+		app.Logger.Info(v)
+	}
+	app.Logger.Info("===============================================")
+	if r.Header["Request-Id"] != nil {
+		app.Logger.Warningf(r.Header["Request-Id"][0])
+		r.SetCtxVar(app.TraceID, r.Header["Request-Id"][0])
+	} else {
+		r.SetCtxVar(app.TraceID, guid.S())
+	}
+
 	contextInfo := &app.ContextInfo{}
 	contextInfo.Session = r.Session
 	if v := r.Session.GetVar(app.SessionKeyUser); !v.IsNil() {

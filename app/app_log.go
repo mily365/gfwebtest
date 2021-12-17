@@ -49,12 +49,18 @@ var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.Handler
 		if in.Level == glog.LEVEL_ERRO {
 			// to es error
 			fmt.Print("error.......")
-			GetEsFactory().Create(context.Background(), guid.S(), string(jsonBytes), "error_log")
+			if g.Config().GetBool("app.enableEs") == true {
+				GetEsFactory().Create(context.Background(), guid.S(), string(jsonBytes), "error_log")
+			}
+
 		}
 		if in.Level == glog.LEVEL_INFO {
 			// to es
 			g.Dump("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-			GetEsFactory().Create(context.Background(), guid.S(), string(jsonBytes), "info_log")
+			if g.Config().GetBool("app.enableEs") == true {
+				GetEsFactory().Create(context.Background(), guid.S(), string(jsonBytes), "info_log")
+			}
+
 			fmt.Print("info.......")
 		}
 		in.Buffer().Write(jsonBytes)
