@@ -88,6 +88,18 @@ func NewSingleHostProxy2(targetHost string) (*singleHostProxy, error) {
 		}
 	}
 	proxy := &httputil.ReverseProxy{Director: director}
+	originalDirector := proxy.Director
+
+	proxy.Director = func(req *http.Request) {
+
+		originalDirector(req)
+
+		modifyRequest(req)
+
+	}
+
+	proxy.ModifyResponse = modifyResponse()
+	proxy.ErrorHandler = errorHandler()
 	return &singleHostProxy{proxy}, nil
 }
 
