@@ -85,7 +85,7 @@
    UserScore = "user_score"
 [gfcli]
     [gfcli.build]
-        name     = "proxy"
+        name     = "free-proxy"
         arch     = "amd64"
         system   = "linux"
         mod      = "none"
