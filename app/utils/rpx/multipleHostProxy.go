@@ -15,8 +15,7 @@ func NewMultipleHostProxy() *multipleHostProxy {
 	return &multipleHostProxy{gmap.NewStrAnyMap(true)}
 }
 func (mhp *multipleHostProxy) GetOrSetSingleHostProxy(hostName string) *singleHostProxy {
-	proxy, err := NewSingleHostProxy2(hostName)
-	g.Dump(proxy)
+	proxy, err := NewSingleHostProxy2()
 	if err != nil {
 		panic(err.Error())
 	}

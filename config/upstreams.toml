@@ -1,0 +1,10 @@
+#多宿主代理配置
+[upstreams]
+ [[upstreams.hosts]]
+    host='192.168.4.1:8080'
+    [[upstreams.hosts.backends]]
+    ip='192.168.4.1:8199'
+    weight=0.5
+    [[upstreams.hosts.backends]]
+     ip='192.168.4.1:8190'
+     weight=0.5

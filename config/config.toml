@@ -1,6 +1,6 @@
 # HTTP Server
 [server]
-	Address     = ":8199"
+	Address     = ":8190"
 	ServerRoot  = "public"
 	ServerAgent = "gf-app"
     #服务
@@ -85,7 +85,7 @@
    UserScore = "user_score"
 [gfcli]
     [gfcli.build]
-        name     = "my-application"
+        name     = "proxy"
         arch     = "amd64"
         system   = "linux"
         mod      = "none"
@@ -120,15 +120,5 @@ modelPath = "/home/jy/dev/backend/gows/src/xpass/app/model/"
    NodeType = 4
    MetaPath=""
 [[flows]]
-
-[upstreams]
- [[upstreams.hosts]]
-    host='192.168.4.1:8080'
-    [[upstreams.hosts.backends]]
-    ip='192.168.4.1:8199'
-    weight=0.5
-    [[upstreams.hosts.backends]]
-     ip='192.168.4.1:8190'
-     weight=0.5
 
 

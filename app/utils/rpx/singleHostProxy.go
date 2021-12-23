@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"xpass/app"
 )
 
 type singleHostProxy struct {
@@ -17,7 +18,7 @@ type singleHostProxy struct {
 
 func GetRandServer(hostCurrent string) interface{} {
 	var findHost g.Map
-	jUpstreams := g.Config().GetMap("upstreams")
+	jUpstreams := g.Config("upstreams").GetMap("upstreams")
 	hosts := jUpstreams["hosts"]
 	for _, v := range hosts.([]interface{}) {
 		log.Println(v.(g.Map)["host"])
@@ -30,7 +31,6 @@ func GetRandServer(hostCurrent string) interface{} {
 	//n := time.Now().Unix() % 2
 	backendsLength := len(findHost["backends"].([]interface{}))
 	n := time.Now().Unix() % int64(backendsLength)
-
 	return findHost["backends"].([]interface{})[n]
 }
 func singleJoiningSlash(a, b string) string {
@@ -64,18 +64,32 @@ func joinURLPath(a, b *url.URL) (path, rawpath string) {
 	}
 	return a.Path + b.Path, apath + bpath
 }
-func NewSingleHostProxy2(targetHost string) (*singleHostProxy, error) {
-	g.Dump("delegateToHost")
-	director := func(req *http.Request) {
-		delegateToHost := GetRandServer(targetHost).(g.Map)["ip"].(string)
-		g.Dump(delegateToHost)
+
+type director func(req *http.Request)
+
+func NewSingleHostProxy2() (*singleHostProxy, error) {
+	directorFun := func(req *http.Request) {
+		//到达代理的来访目标req.Host,根据配置获取对应的要分发到的服务器
+		//根据请求的url  /serviceName/api/entity/aciotn
+		//提取serviceName,按照serviceName找到具体的被委托主机
+		//被委托的服务启动时，要进行服务注册，注册的路径 /services/student-service/
+		//注意req是被科隆后的
+		delegateToHost := GetRandServer(req.Host).(g.Map)["ip"].(string)
+
+		app.Logger.Warning("current delegate ip is " + delegateToHost)
 		urlToDelegate, err := url.Parse("http://" + delegateToHost)
 		if err != nil {
 			panic(err.Error())
 		}
 		req.URL.Scheme = urlToDelegate.Scheme
 		req.URL.Host = urlToDelegate.Host
+
+		app.Logger.Warning(req.URL)
+
 		req.URL.Path, req.URL.RawPath = joinURLPath(urlToDelegate, req.URL)
+
+		app.Logger.Warning(req.URL.Path)
+		app.Logger.Warning(req.URL.RawPath)
 		targetQuery := urlToDelegate.RawQuery
 		if targetQuery == "" || req.URL.RawQuery == "" {
 			req.URL.RawQuery = targetQuery + req.URL.RawQuery
@@ -87,13 +101,12 @@ func NewSingleHostProxy2(targetHost string) (*singleHostProxy, error) {
 			req.Header.Set("User-Agent", "")
 		}
 	}
-	proxy := &httputil.ReverseProxy{Director: director}
+	app.Logger.Warning("ppppppp")
+	proxy := &httputil.ReverseProxy{Director: directorFun}
+
 	originalDirector := proxy.Director
-
 	proxy.Director = func(req *http.Request) {
-
 		originalDirector(req)
-
 		modifyRequest(req)
 
 	}
@@ -122,18 +135,19 @@ func NewSingleHostProxy(targetHost string) (*httputil.ReverseProxy, error) {
 	proxy.Director = func(req *http.Request) {
 
 		originalDirector(req)
-
 		modifyRequest(req)
 
 	}
 
 	proxy.ModifyResponse = modifyResponse()
 	proxy.ErrorHandler = errorHandler()
+
 	return proxy, nil
 
 }
 func modifyRequest(req *http.Request) {
 	req.Header.Set("Request-Id", "xxoo1122dddd")
+	req.Header.Set("X-Forwarded-For-Host", req.Host)
 	req.Header.Set("X-Proxy", "Simple-Reverse-Proxy")
 
 }

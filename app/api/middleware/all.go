@@ -48,6 +48,7 @@ func (*all) Ctx(r *ghttp.Request) {
 		app.Logger.Info(k)
 		app.Logger.Info(v)
 	}
+	app.Logger.Info(r.Host)
 	app.Logger.Info("===============================================")
 	if r.Header["Request-Id"] != nil {
 		app.Logger.Warningf(r.Header["Request-Id"][0])
