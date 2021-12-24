@@ -7,7 +7,7 @@
     weight=0.5
 
  [[upstreams.hosts]]
-       host='jiaxiya.com:8000'
+       host='zhiquanquan.com:8000'
        [[upstreams.hosts.backends]]
        ip='192.168.4.1:3003'
        weight=0.5
