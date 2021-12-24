@@ -150,11 +150,51 @@ func modifyRequest(req *http.Request) {
 	req.Header.Set("X-Forwarded-For-Host", req.Host)
 	req.Header.Set("X-Proxy", "Simple-Reverse-Proxy")
 
+	for r, v := range req.Header {
+		app.Logger.Warning(r, v)
+	}
+	jiaoyiToken := "Bearer jiaoyi"
+	smToken := "Bearer sm"
+	if req.Header["Authorization"] != nil {
+		if smToken == req.Header["Authorization"][0] {
+			app.Logger.Warning(req.Header["Authorization"][0])
+			req.Header.Set("x-consumer-username", "sm")
+			req.Header.Set("x-consumer-custom-id", "1")
+			req.Header.Set("x-credential-identifier", "Simple-Reverse-Proxy")
+			req.Header.Set("x-consumetag", "cmp_1|pass_3b56ba476dc4f75603a59e06ed470406")
+		}
+		if jiaoyiToken == req.Header["Authorization"][0] {
+			app.Logger.Warning(req.Header["Authorization"][0])
+			req.Header.Set("x-consumer-username", "jiaoyi")
+			req.Header.Set("x-consumer-custom-id", "60")
+			req.Header.Set("x-credential-identifier", "Simple-Reverse-Proxy")
+			req.Header.Set("x-consumetag", "cmp_40|pass_516f23ffe1eb6628f2898c919b1d9fad")
+
+		}
+
+	}
+
+	//如果host是交付中心平台那么，就设置超管身份
+	//if gstr.Equal(req.Host, "t9.com:8000") {
+	//	req.Header.Set("x-consumer-username", "sm")
+	//	req.Header.Set("x-consumer-custom-id", "1")
+	//	req.Header.Set("x-credential-identifier", "Simple-Reverse-Proxy")
+	//	req.Header.Set("x-consumetag", "cmp_1|pass_3b56ba476dc4f75603a59e06ed470406")
+	//}
+	//req.Header.Set("x-consumer-username", "Simple-Reverse-Proxy")
+	//req.Header.Set("x-consumer-custom-id", "Simple-Reverse-Proxy")
+	//req.Header.Set("x-credential-identifier", "Simple-Reverse-Proxy")
+	//req.Header.Set("x-consumetag", "cmp_1|pass_3b56ba476dc4f75603a59e06ed470406")
+
 }
 func modifyResponse() func(*http.Response) error {
 
 	return func(resp *http.Response) error {
-
+		app.Logger.Warning("resp....................................")
+		resp.Header.Add("Access-Control-Allow-Origin", "*")
+		resp.Header.Add("Access-Control-Allow-Headers", "*")
+		////resp.Header.Add("Access-Control-Allow-Credentials", "true")
+		resp.Header.Add("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS")
 		resp.Header.Set("X-Proxy", "Magical")
 
 		return nil

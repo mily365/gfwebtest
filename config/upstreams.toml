@@ -1,10 +1,18 @@
 #多宿主代理配置
 [upstreams]
  [[upstreams.hosts]]
-    host='192.168.4.1:8080'
+    host='t9.com:8000'
     [[upstreams.hosts.backends]]
-    ip='192.168.4.1:8199'
+    ip='192.168.4.1:3000'
     weight=0.5
-    [[upstreams.hosts.backends]]
+
+ [[upstreams.hosts]]
+       host='jiaxiya.com:8000'
+       [[upstreams.hosts.backends]]
+       ip='192.168.4.1:3003'
+       weight=0.5
+  [[upstreams.hosts]]
+     host='192.168.4.1:8000'
+     [[upstreams.hosts.backends]]
      ip='192.168.4.1:8190'
      weight=0.5
