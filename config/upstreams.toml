@@ -11,6 +11,19 @@
        [[upstreams.hosts.backends]]
        ip='192.168.4.1:3003'
        weight=0.5
+
+ [[upstreams.hosts]]
+       host='icp.com:8000'
+       [[upstreams.hosts.backends]]
+       ip='192.168.4.1:3006'
+       weight=0.5
+
+  [[upstreams.hosts]]
+        host='ic.com:8000'
+        [[upstreams.hosts.backends]]
+        ip='192.168.4.1:3007'
+        weight=0.5
+
   [[upstreams.hosts]]
      host='192.168.4.1:8000'
      [[upstreams.hosts.backends]]

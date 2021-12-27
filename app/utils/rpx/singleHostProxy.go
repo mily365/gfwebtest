@@ -155,6 +155,7 @@ func modifyRequest(req *http.Request) {
 	}
 	jiaoyiToken := "Bearer jiaoyi"
 	smToken := "Bearer sm"
+	zzbToken := "Bearer jytest6"
 	if req.Header["Authorization"] != nil {
 		if smToken == req.Header["Authorization"][0] {
 			app.Logger.Warning(req.Header["Authorization"][0])
@@ -169,6 +170,14 @@ func modifyRequest(req *http.Request) {
 			req.Header.Set("x-consumer-custom-id", "60")
 			req.Header.Set("x-credential-identifier", "Simple-Reverse-Proxy")
 			req.Header.Set("x-consumetag", "cmp_40|pass_516f23ffe1eb6628f2898c919b1d9fad")
+
+		}
+		if zzbToken == req.Header["Authorization"][0] {
+			app.Logger.Warning(req.Header["Authorization"][0])
+			req.Header.Set("x-consumer-username", "jytest6")
+			req.Header.Set("x-consumer-custom-id", "10")
+			req.Header.Set("x-credential-identifier", "Simple-Reverse-Proxy")
+			req.Header.Set("x-consumetag", "cmp_10|pass_7c8712d838190c3fdc6305aa7584bc98")
 
 		}
 

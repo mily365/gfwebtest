@@ -31,7 +31,7 @@ func main() {
 	})
 
 	//
-	log.Fatal(http.ListenAndServe("192.168.4.1:8000", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8000", nil))
 	//log.Print(rpx.GetRandServer("192.168.4.1:8080"))
 
 }
