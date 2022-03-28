@@ -55,12 +55,12 @@ func (tpf *typePointerFuncFactory) RegisterOrGetTypePointer(typeName string, typ
 	}
 }
 func (tpf *typePointerFuncFactory) GetStructPointer(explicitName string) interface{} {
-	fp := TypePointerFuncFactory.RegisterOrGetTypePointer(explicitName, nil)
+	fp := tpf.RegisterOrGetTypePointer(explicitName, nil)
 	up := fp()
 	return up
 }
 func (tpf *typePointerFuncFactory) GetStructArrayPointer(explicitName string) interface{} {
-	fp := TypePointerFuncFactory.RegisterOrGetTypePointer(explicitName+"s", nil)
+	fp := tpf.RegisterOrGetTypePointer(explicitName+"s", nil)
 	up := fp()
 	return up
 }
