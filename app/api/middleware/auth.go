@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"xpass/app"
 
 	"github.com/gogf/gf/net/ghttp"
@@ -18,11 +19,12 @@ func init() {
 }
 
 type auth struct {
-	gmeta.Meta `path:"middle.api.auth"`
+	gmeta.Meta `path:"middle.api"`
 }
 
 // 鉴权中间件，只有登录成功之后才能通过
 func (s *auth) Auth(r *ghttp.Request) {
+	fmt.Println("auth called....................................")
 	r.Response.WriteStatus(http.StatusForbidden)
-	//r.Middleware.Next()
+	r.Middleware.Next()
 }

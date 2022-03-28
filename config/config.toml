@@ -1,6 +1,6 @@
 # HTTP Server
 [server]
-	Address     = ":8190"
+	Address     = ":8199"
 	ServerRoot  = "public"
 	ServerAgent = "gf-app"
     #服务
@@ -84,16 +84,26 @@
    UserDetail = "user_detail"
    UserScore = "user_score"
 [gfcli]
-    [gfcli.build]
-        name     = "free-proxy"
-        arch     = "amd64"
-        system   = "linux"
-        mod      = "none"
-        cgo      = 0
-        pack     = "config,i18n,public,template"
-        version  = ""
-        output   = "./bin"
-        extra    = ""
+#     [gfcli.build]
+#         name     = "free-proxy"
+#         arch     = "amd64"
+#         system   = "linux"
+#         mod      = "none"
+#         cgo      = 0
+#         pack     = "config,i18n,public,template"
+#         version  = ""
+#         output   = "./bin"
+#         extra    = ""
+      [gfcli.build]
+        name=     "free-proxy"
+        arch=     "amd64"
+        system=   "darwin"
+        mod=      "none"
+        cgo=      0
+        pack=     ""
+        version=  "v1.0.0"
+        output=   "./bin"
+        extra=    ""
 
     [[gfcli.gen.dao]]
         link     = "mysql:write:write@tcp(43.247.184.35:8899)/relation"

@@ -68,6 +68,7 @@ import (
 //}
 func main() {
 	s := g.Server()
+	//fmt.Println(gstr.CaseCamelLower("KateOk"))
 	s.SetConfigWithMap(g.Map{
 		"SessionMaxAge":  time.Minute,
 		"SessionStorage": gsession.NewStorageRedis(g.Redis()),

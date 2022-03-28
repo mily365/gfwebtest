@@ -19,7 +19,7 @@ func (mhp *multipleHostProxy) GetOrSetSingleHostProxy(hostName string) *singleHo
 	if err != nil {
 		panic(err.Error())
 	}
-	return mhp.GetOrSet("hostName", proxy).(*singleHostProxy)
+	return mhp.GetOrSet(hostName, proxy).(*singleHostProxy)
 }
 
 func (mhp *multipleHostProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
