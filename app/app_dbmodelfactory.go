@@ -20,13 +20,18 @@ func (mf *modelFactory) TxModelActions(tblName string, fun func(tx *gdb.TX, mode
 	if ex != nil {
 		panic(ex.Error())
 	}
-	m := mf.GetOrSet(tblName, g.DB().Model(tblName)).(*gdb.Model)
-	err, rt := fun(tx, m.Clone())
+	//m := mf.GetOrSet(tblName, g.DB().Model(tblName)).(*gdb.Model)
+	mClone := mf.GetModel(tblName)
+	err, rt := fun(tx, mClone)
 	defer func() {
 		if err != nil {
-			tx.Rollback()
+			if er := tx.Rollback(); er != nil {
+				panic(er.Error())
+			}
 		} else {
-			tx.Commit()
+			if erx := tx.Commit(); erx != nil {
+				panic(erx.Error())
+			}
 		}
 	}()
 	return err, rt
