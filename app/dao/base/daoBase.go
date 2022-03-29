@@ -71,6 +71,7 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	}
 	sort.Strings(keys)
 	//gmeta.Meta `master:"User_uid#" second:"UserDetail_uid#User_Uid" third:"UserScore_uid#UserDetail_Uid"`
+	//gmeta.Meta `a:"User_id#" b:"UserDetail_uid#User_Id" c:"UserScore_uid#User_Id"`
 	for _, role := range keys {
 		g.Log().Debug(role + "ccccccccccccccccccccccc")
 		rel := metadata[role]
@@ -116,10 +117,11 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 			rtn.Total = cnt
 		} else {
 			modelrel := relArray[1]
-			//gmeta.Meta `master:"User_uid#" second:"UserDetail_uid#User_Uid" third:"UserScore#UserDetail_Uid"`
+			//gmeta.Meta `a:"User_id#" b:"UserDetail_uid#User_Id" c:"UserScore_uid#User_Id"`
 			depEntity := gstr.Split(modelrel, "_")[0]
 			depEntityProperty := gstr.Split(modelrel, "_")[1]
-			um2 := app.ModelFactory.GetModel(searchTable.(string))
+			//confirm special table
+			um2 := app.ModelFactory.GetModel(searchTable.(string)).Clone()
 			g.Log().Debug(depEntity + "---" + depEntityProperty + "tablekey---" + tablekey)
 			if search["subFields"] != nil {
 				um2.Fields(search["subFields"].(g.Map)[modelname]).Where(tablekey, gdb.ListItemValuesUnique(sp, depEntity, depEntityProperty)).

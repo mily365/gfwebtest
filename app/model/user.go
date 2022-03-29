@@ -27,7 +27,7 @@ func NewUserWithRelations() interface{} {
 }
 
 type UserWithDetailAndScore struct {
-	gmeta.Meta `a:"User_id#" b:"UserDetail_uid#User_Id" c:"UserScore_uid#User_Id"`
+	gmeta.Meta `a:"User_Id#" b:"UserDetail_Uid#User_Id" c:"UserScore_Uid#User_Id"`
 	User       *User
 	UserDetail *UserDetail
 	UserScore  []*UserScore
