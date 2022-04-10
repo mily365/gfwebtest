@@ -67,6 +67,7 @@ import (
 //	r.Response.Write("show")
 //}
 func main() {
+
 	s := g.Server()
 	//fmt.Println(gstr.CaseCamelLower("KateOk"))
 	s.SetConfigWithMap(g.Map{

@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gmeta"
+	"github.com/gogf/gf/util/gutil"
 	"reflect"
 	"xpass/app"
 	"xpass/app/api/base"
@@ -26,6 +27,7 @@ func init() {
 	app.AppContext.RegisterObj(CodeGenApi)
 }
 
+//根据实体ES索引
 func (cg *codeGenApi) Initesmaping(r *ghttp.Request) {
 	mapFuncModelPointer := app.TypePointerFuncFactory.GetFuncMapForModelPointer()
 	esNames := make([]string, 0)
@@ -57,6 +59,11 @@ func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 		panic("input target param....")
 	}
 	modelName := pm["model"].(string)
+	//检查是否存在
+	modelNameConfig := g.Cfg().GetString("path2Model." + gstr.ToLower(modelName))
+	if gutil.IsEmpty(modelNameConfig) {
+		panic("please config entity name " + modelName + " in config file...........................!")
+	}
 
 	exportModelName := modelName
 	modelName = gstr.CaseCamelLower(modelName)
@@ -81,7 +88,14 @@ func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 		if err != nil {
 			panic(err)
 		}
-		gfile.PutContents(apifpath, content)
+		if gfile.Exists(apifpath) == false {
+			err = gfile.PutContents(apifpath, content)
+			if err != nil {
+				g.Log().Debug(err.Error())
+			}
+
+		}
+
 	case "model":
 
 		content, err := g.View().ParseContent(context.TODO(), ModelTmpl, g.Map{
@@ -91,10 +105,13 @@ func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 		if err != nil {
 			panic(err)
 		}
-		err = gfile.PutContents(modelfpath, content)
-		g.Log().Debug(modelfpath)
-		if err != nil {
-			g.Log().Debug(err.Error())
+		//
+		if gfile.Exists(modelfpath) == false {
+			err = gfile.PutContents(modelfpath, content)
+			g.Log().Debug(modelfpath)
+			if err != nil {
+				g.Log().Debug(err.Error())
+			}
 		}
 
 	case "service":
@@ -106,7 +123,12 @@ func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 		if err != nil {
 			panic(err)
 		}
-		gfile.PutContents(servicefpath, content)
+		if gfile.Exists(servicefpath) == false {
+			err = gfile.PutContents(servicefpath, content)
+			if err != nil {
+				g.Log().Debug(err.Error())
+			}
+		}
 
 	case "dao":
 		content, err := g.View().ParseContent(context.TODO(), DaoTmpl, g.Map{
@@ -117,7 +139,12 @@ func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 		if err != nil {
 			panic(err)
 		}
-		gfile.PutContents(daofpath, content)
+		if gfile.Exists(daofpath) == false {
+			err = gfile.PutContents(daofpath, content)
+			if err != nil {
+				g.Log().Debug(err.Error())
+			}
+		}
 
 	default:
 		g.Log().Debug("will add new target......")

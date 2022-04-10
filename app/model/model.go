@@ -8,6 +8,27 @@ import (
 	"github.com/gogf/gf/os/gtime"
 )
 
+// ControlInfo is the golang structure for table control_info.
+type ControlInfo struct {
+	Id              int         `orm:"id,primary"       json:"id"`              //
+	Title           string      `orm:"title"            json:"title"`           //
+	PropName        string      `orm:"prop_name"        json:"propName"`        //
+	Icon            string      `orm:"icon"             json:"icon"`            //
+	Order           string      `orm:"order"            json:"order"`           //
+	GroupName       string      `orm:"group_name"       json:"groupName"`       //
+	IsKey           int         `orm:"is_key"           json:"isKey"`           //
+	IsHidden        int         `orm:"is_hidden"        json:"isHidden"`        //
+	ControlType     string      `orm:"control_type"     json:"controlType"`     //
+	ValidatorType   string      `orm:"validator_type"   json:"validatorType"`   //
+	ControlPosition string      `orm:"control_position" json:"controlPosition"` //
+	ExtraInfo       string      `orm:"extra_Info"       json:"extraInfo"`       //
+	CreatedTime     *gtime.Time `orm:"created_time"     json:"createdTime"`     //
+	UpdatedTime     *gtime.Time `orm:"updated_time"     json:"updatedTime"`     //
+	DeletedTime     *gtime.Time `orm:"deleted_time"     json:"deletedTime"`     //
+	Version         int         `orm:"version"          json:"version"`         //
+	Sid             int         `orm:"sid"              json:"sid"`             //
+}
+
 // Project is the golang structure for table project.
 type Project struct {
 	Id   int    `orm:"id,primary" json:"id"`   //
@@ -15,24 +36,27 @@ type Project struct {
 	Age  int    `orm:"age"        json:"age"`  // 年龄
 }
 
-// Sqlaudit is the golang structure for table sqlaudit.
-type Sqlaudit struct {
-	Id   int         `orm:"id,primary" json:"id"`   //
-	Cost int         `orm:"cost"       json:"cost"` //
-	Time *gtime.Time `orm:"time"       json:"time"` //
-	Err  string      `orm:"err"        json:"err"`  //
-	Sql  string      `orm:"sql"        json:"sql"`  //
+// Solution is the golang structure for table solution.
+type Solution struct {
+	Id          int         `orm:"id,primary"   json:"id"`          //
+	BizCode     string      `orm:"biz_code"     json:"bizCode"`     // 业务编码，资源编码
+	ModelName   string      `orm:"model_name"   json:"modelName"`   // 方案所描述的实体名称，后端实体名称
+	Title       string      `orm:"title"        json:"title"`       // 方案显示名称
+	CreatedTime *gtime.Time `orm:"created_time" json:"createdTime"` //
+	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
+	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
+	Version     int         `orm:"version"      json:"version"`     //
 }
 
 // User is the golang structure for table user.
 type User struct {
-	Id        uint        `orm:"id,primary" json:"id"`                   //
-	Name      string      `orm:"name"       json:"name"`                 //
-	Age       int         `orm:"age"       json:"age"`                   //
-	CreatedAt *gtime.Time `orm:"created_at" json:"created_at"`           //
-	UpdatedAt *gtime.Time `orm:"updated_at" json:"updated_at"`           //
-	DeletedAt *gtime.Time `orm:"deleted_at" json:"deleted_at,omitempty"` //
-	Version   int         `orm:"version"    json:"version"`              //
+	Id        uint        `orm:"id,primary" json:"id"`        //
+	Name      string      `orm:"name"       json:"name"`      //
+	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` //
+	UpdatedAt *gtime.Time `orm:"updated_at" json:"updatedAt"` //
+	DeletedAt *gtime.Time `orm:"deleted_at" json:"deletedAt"` //
+	Version   int         `orm:"version"    json:"version"`   //
+	Age       int         `orm:"age"        json:"age"`       //
 }
 
 // UserDetail is the golang structure for table user_detail.

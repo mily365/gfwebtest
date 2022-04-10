@@ -47,7 +47,7 @@
 # Database.
 [database]
 # 	type = "MyDriver"
-    link  = "mysql:write:write@tcp(43.247.184.35:8899)/xpaas"
+    link  = "mysql:write:write@tcp(43.247.184.35:8899)/relation"
     debug = true
     timeMaintainDisabled = false
     # Database logger.
@@ -72,7 +72,6 @@
     maxRetries = 5
 
 [path2Model]
-   solution= "Solution"
    project= "Project"
    user = "User"
    userdetail = "UserDetail"
@@ -80,7 +79,6 @@
    codegen = "CodeGen"
    initdata = "InitData"
 [model2Tbl]
-   Solution="solution"
    Project="project"
    User = "user"
    UserDetail = "user_detail"
@@ -108,7 +106,7 @@
         extra=    ""
 
     [[gfcli.gen.dao]]
-        link     = "mysql:write:write@tcp(43.247.184.35:8899)/xpaas"
+        link     = "mysql:write:write@tcp(43.247.184.35:8899)/relation"
         path   = "./app"
         jsonCase = "CamelLower"
 

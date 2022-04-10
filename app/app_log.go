@@ -64,8 +64,8 @@ var LoggingJsonHandler glog.Handler = func(ctx context.Context, in *glog.Handler
 			fmt.Print("info.......")
 		}
 		in.Buffer().Write(jsonBytes)
-		//in.Buffer().WriteString("\n")
-		in.Content = string(jsonBytes)
+		in.Buffer().WriteString("\n")
+		//in.Content = string(jsonBytes)
 	}
 
 	//fmt.Println("to push es....")
