@@ -77,7 +77,7 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 				"isKey":           false,
 				"isHidden":        false,
 				"order":           "0",
-				"controlType":     "slide_toggle",
+				"controlType":     "slide_toggle_开关选择",
 				"groupName":       "开关属性",
 				"validatorType":   "none_无",
 				"controlPosition": "all_所有",
@@ -92,7 +92,7 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 				"isKey":           false,
 				"isHidden":        false,
 				"order":           "0",
-				"controlType":     "slide_toggle",
+				"controlType":     "slide_toggle_开关选择",
 				"groupName":       "开关属性",
 				"validatorType":   "none_无",
 				"controlPosition": "all_所有",
@@ -137,26 +137,26 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 				"isKey":           false,
 				"isHidden":        false,
 				"order":           "0",
-				"controlType":     "search_single_select",
+				"controlType":     "search_single_select_搜索单选",
 				"groupName":       "选择属性",
 				"validatorType":   "none_无",
 				"controlPosition": "all_所有",
 				"extraInfo": `{
 						"isSort": false, "dynamicValues": [],
 						"options": [
-						    { "key": "ControlType.text", "displayText": "文本输入" },
-							{ "key": "ControlType.chiplist_input", "displayText": "标签输入" },
-							{ "key": "ControlType.number", "displayText": "数字输入" },
-							{ "key": "ControlType.slide_toggle", "displayText": "开关选择" },
-							{ "key": "ControlType.label", "displayText": "文本只读" },
-							{ "key": "ControlType.datetime", "displayText": "日期时间" },
-							{ "key": "ControlType.datetime_span", "displayText": "日期范围" },
-							{ "key": "ControlType.search_single_select", "displayText": "搜索单选" },
-							{ "key": "ControlType.search_multi_select", "displayText": "搜索多选" },
-							{ "key": "ControlType.templ", "displayText": "模板" },
-							{ "key": "ControlType.actions", "displayText": "动作列" },
-							{ "key": "ControlType.action_button", "displayText": "动作按钮" },
-							{ "key": "ControlType.childTable", "displayText": "子表" }
+						    { "key": "text", "displayText": "文本输入" },
+							{ "key": "chiplist_input", "displayText": "标签输入" },
+							{ "key": "number", "displayText": "数字输入" },
+							{ "key": "slide_toggle", "displayText": "开关选择" },
+							{ "key": "label", "displayText": "文本只读" },
+							{ "key": "datetime", "displayText": "日期时间" },
+							{ "key": "datetime_span", "displayText": "日期范围" },
+							{ "key": "search_single_select", "displayText": "搜索单选" },
+							{ "key": "search_multi_select", "displayText": "搜索多选" },
+							{ "key": "templ", "displayText": "模板" },
+							{ "key": "actions", "displayText": "动作列" },
+							{ "key": "action_button", "displayText": "动作按钮" },
+							{ "key": "childTable", "displayText": "子表" }
 			           ],
 						"refDicCode": "false", "refModel": "false" }`,
 			},
@@ -168,18 +168,18 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 				"isKey":           false,
 				"isHidden":        false,
 				"order":           "0",
-				"controlType":     "search_multi_select",
+				"controlType":     "search_multi_select_搜索多选",
 				"groupName":       "选择属性",
 				"validatorType":   "none_无",
 				"controlPosition": "all_所有",
 				"extraInfo": `{
 						"isSort": false, "dynamicValues": [],
 						"options": [
-			             { "key": "ValidatorType.none", "displayText": "无" },
-							{ "key": "ValidatorType.required", "displayText": "必输" },
-							{ "key": "ValidatorType.minLength", "displayText": "最小长度" },
-							{ "key": "ValidatorType.max", "displayText": "最大值" },
-							{ "key": "ValidatorType.max", "displayText": "最小值" }
+			                { "key": "none", "displayText": "无" },
+							{ "key": "required", "displayText": "必输" },
+							{ "key": "minLength", "displayText": "最小长度" },
+							{ "key": "max", "displayText": "最大值" },
+							{ "key": "min", "displayText": "最小值" }
 			           ],
 						"refDicCode": false, "refModel": false }`,
 			},
@@ -191,17 +191,17 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 				"isKey":           false,
 				"isHidden":        false,
 				"order":           "0",
-				"controlType":     "search_single_select",
+				"controlType":     "search_single_select_搜索单选",
 				"groupName":       "选择属性",
 				"validatorType":   "none_无",
 				"controlPosition": "all_所有",
 				"extraInfo": `{
 						"isSort": false, "dynamicValues": [],
 						"options": [
-				            { "key": "ControlPosition.all", "displayText": "所有" },
-							{ "key": "ControlPosition.list", "displayText": "列表" },
-							{ "key": "ControlPosition.form", "displayText": "表单" },
-							{ "key": "ControlPosition.search", "displayText": "搜索"}
+				            { "key": "all", "displayText": "所有" },
+							{ "key": "list", "displayText": "列表" },
+							{ "key": "form", "displayText": "表单" },
+							{ "key": "search", "displayText": "搜索"}
 			           ],
 						"refDicCode": false, "refModel": false }`,
 			},
@@ -220,8 +220,268 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 				"extraInfo": `{
 						"isSort": false, "dynamicValues": []}`,
 			},
+
+			g.Map{
+				"sid":             sid,
+				"title":           "操作",
+				"propName":        "actions",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "actions_动作列",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "添加",
+				"propName":        "add",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "list_列表",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "删除",
+				"propName":        "delete",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "list_列表",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "修改",
+				"propName":        "edit",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "list_列表",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "取消",
+				"propName":        "cancel",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "form_表单",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "保存",
+				"propName":        "save",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "form_表单",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
 		}
 		_, err2 := app.ModelFactory.GetModel("control_info").TX(tx).Data(lst).Save()
+		if err2 != nil {
+			return err2, nil
+		}
+		solutionInfoMetaData := model.Solution{}
+		solutionInfoMetaData.BizCode = "xpass_solution"
+		solutionInfoMetaData.ModelName = "Solution"
+		solutionInfoMetaData.Title = "解决方案"
+
+		sid, err = xmodel.TX(tx).Data(solutionInfoMetaData).OmitEmpty().InsertAndGetId()
+		if err != nil {
+			return err, nil
+		}
+		lst = g.List{
+			g.Map{
+				"sid":             sid,
+				"title":           "业务编码",
+				"propName":        "bizCode",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "text_文本输入",
+				"groupName":       "基本信息",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "显示名称",
+				"propName":        "title",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "text_文本输入",
+				"groupName":       "基本信息",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": [] }`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "实体名称",
+				"propName":        "modelName",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "text_文本输入",
+				"groupName":       "基本信息",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": [] }`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "方案引用",
+				"propName":        "refSolutions",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "childTable_子表",
+				"groupName":       "元数据描述",
+				"validatorType":   "none_无",
+				"controlPosition": "form_表单",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": [],
+					    "options":[
+						  {"key":"xpass_controlinfo","displayText":"方案实体属性描述"}
+						 ]
+			     }`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "操作",
+				"propName":        "actions",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "actions_动作列",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "添加",
+				"propName":        "add",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "list_列表",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "删除",
+				"propName":        "delete",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "list_列表",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "修改",
+				"propName":        "edit",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "list_列表",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "取消",
+				"propName":        "cancel",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "form_表单",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "保存",
+				"propName":        "save",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "action_button_动作按钮",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "form_表单",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
+		}
+		_, err2 = app.ModelFactory.GetModel("control_info").TX(tx).Data(lst).Save()
 		if err2 != nil {
 			return err2, nil
 		}

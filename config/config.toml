@@ -73,6 +73,7 @@
 
 [path2Model]
    solution= "Solution"
+   solutionwithcontrolinfo="SolutionWithControlInfo"
    project= "Project"
    user = "User"
    userdetail = "UserDetail"
@@ -81,6 +82,8 @@
    initdata = "InitData"
 [model2Tbl]
    Solution="solution"
+
+   ControlInfo="control_info"
    Project="project"
    User = "user"
    UserDetail = "user_detail"

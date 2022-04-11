@@ -33,6 +33,25 @@ func getModelName(ctx context.Context, search g.Map) string {
 	return modelName
 }
 
+//返回CaseCamel的实体名称
+func getModelAndTableName(ctx context.Context, search g.Map) (string, string) {
+	var modelName string = ""
+	//路径映射优先
+	path2ModelRegKey := ctx.Value(app.Path2ModelRegKey).(string)
+	if search != nil && search["model"] != nil {
+		modelName = search["model"].(string)
+	} else {
+		modelName = gstr.CaseCamel(path2ModelRegKey)
+	}
+	if gutil.IsEmpty(modelName) {
+		panic("please input model query param..")
+	}
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName)
+	if searchTable == nil {
+		panic("please config model2table..")
+	}
+	return modelName, searchTable.(string)
+}
 func (s *DaoBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
@@ -98,6 +117,9 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 		}
 
 		searchTable := g.Config().Get("model2Tbl." + modelname)
+		if gutil.IsEmpty(searchTable) {
+			panic("please config model2tabl for " + modelname + " in config file!")
+		}
 		if role == "a" {
 			skip, pageSize := app.PageParam(search)
 			um := app.ModelFactory.GetModel(searchTable.(string))
@@ -145,14 +167,8 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	app.Logger.Debug("dao all called......")
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
-	modelName := getModelName(ctx, search)
-	app.Logger.Debug("dao all called......" + modelName)
-	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName)
+	modelName, searchTable := getModelAndTableName(ctx, search)
 	modelKey := gstr.CaseCamelLower(modelName)
-	if searchTable == nil {
-		panic("please config model2table..")
-	}
-
 	if g.Config().GetBool("appInfo.enableEs") == true {
 		esRes := app.GetEsFactory().All(ctx, search, modelKey)
 		rtn.Total = int(esRes.Hits.TotalHits.Value)
@@ -164,7 +180,7 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	var um *gdb.Model
 	//约定类型函数工厂的key取实体的首字母小写
 	sp = app.TypePointerFuncFactory.GetStructArrayPointer(modelKey)
-	um = app.ModelFactory.GetModel(searchTable.(string))
+	um = app.ModelFactory.GetModel(searchTable)
 	var cntM = um.Clone()
 	skip, pageSize := app.PageParam(search)
 	var orderByStrings = []string{""}

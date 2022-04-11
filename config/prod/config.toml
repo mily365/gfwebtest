@@ -79,6 +79,7 @@
    codegen = "CodeGen"
    initdata = "InitData"
 [model2Tbl]
+
    Project="project"
    User = "user"
    UserDetail = "user_detail"
