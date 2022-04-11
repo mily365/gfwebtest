@@ -18,6 +18,7 @@ func (s *ServiceBase) Scrollpage(ctx context.Context, i interface{}) interface{}
 	return s.Dao.Scrollpage(ctx, i)
 }
 func (s *ServiceBase) All(ctx context.Context, i interface{}) interface{} {
+	g.Log().Debug("service ServiceBase  " + ctx.Value(app.Path2ModelRegKey).(string))
 	return s.Dao.All(ctx, i)
 }
 

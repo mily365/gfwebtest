@@ -38,7 +38,7 @@ func (*all) Ctx(r *ghttp.Request) {
 			panic("access url not exist!")
 		}
 		////model type reg key
-		r.SetCtxVar(app.PathModelName, gstr.CaseCamelLower(modelNme.(string)))
+		r.SetCtxVar(app.Path2ModelRegKey, gstr.CaseCamelLower(modelNme.(string)))
 
 	}
 	//set traceidf

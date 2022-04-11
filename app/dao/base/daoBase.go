@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
+	"github.com/gogf/gf/util/gutil"
 	"sort"
 	"xpass/app"
 )
@@ -15,25 +16,28 @@ import (
 type DaoBase struct {
 }
 
-func getModelName(search g.Map, ctx context.Context) string {
+//返回CaseCamel的实体名称
+func getModelName(ctx context.Context, search g.Map) string {
 	var modelName string = ""
 	//路径映射优先
-	modelNameFromPath := ctx.Value(app.PathModelName).(string)
-	if search["model"] != nil {
+	path2ModelRegKey := ctx.Value(app.Path2ModelRegKey).(string)
+	if search != nil && search["model"] != nil {
 		modelName = search["model"].(string)
 	} else {
-		modelName = modelNameFromPath
+		modelName = gstr.CaseCamel(path2ModelRegKey)
 	}
-	if modelName == "" {
+	if gutil.IsEmpty(modelName) {
 		panic("please input model query param..")
 	}
+
 	return modelName
 }
+
 func (s *DaoBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	//main model
-	modelName := getModelName(search, ctx)
+	modelName := getModelName(ctx, search)
 	modelKey := gstr.CaseCamelLower(modelName)
 	app.Logger.Debug("dao scrollpage....", modelKey)
 	res := app.GetEsFactory().ScrollPage(ctx, search, modelKey)
@@ -56,7 +60,7 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	//main model
-	modelName := getModelName(search, ctx)
+	modelName := getModelName(ctx, search)
 	modelKey := gstr.CaseCamelLower(modelName)
 	//fetch combined entity
 	sp := app.TypePointerFuncFactory.GetStructArrayPointer(modelKey)
@@ -141,8 +145,14 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	app.Logger.Debug("dao all called......")
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
-	modelName := getModelName(search, ctx)
+	modelName := getModelName(ctx, search)
+	app.Logger.Debug("dao all called......" + modelName)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName)
 	modelKey := gstr.CaseCamelLower(modelName)
+	if searchTable == nil {
+		panic("please config model2table..")
+	}
+
 	if g.Config().GetBool("appInfo.enableEs") == true {
 		esRes := app.GetEsFactory().All(ctx, search, modelKey)
 		rtn.Total = int(esRes.Hits.TotalHits.Value)
@@ -152,18 +162,9 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 
 	var sp interface{}
 	var um *gdb.Model
-	app.Logger.Debug("dao all called......xxxxxxx")
-
-	searchTable := g.Config().Get("model2Tbl." + modelName)
-	if searchTable == nil {
-		panic("please config model2table..")
-	}
-	app.Logger.Debug(modelKey, "xxxxxxxxxxxxxxxxxxxxxxxxxxx")
 	//约定类型函数工厂的key取实体的首字母小写
 	sp = app.TypePointerFuncFactory.GetStructArrayPointer(modelKey)
 	um = app.ModelFactory.GetModel(searchTable.(string))
-
-	app.Logger.Debug("dao all called......xxxxxxx")
 	var cntM = um.Clone()
 	skip, pageSize := app.PageParam(search)
 	var orderByStrings = []string{""}
@@ -184,8 +185,9 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 
 func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 	g.Log().Debug("create..............................................................")
-	modelKey := ctx.Value(app.PathModelName).(string)
-	searchTable := g.Config().Get("model2Tbl." + gstr.CaseCamel(modelKey)).(string)
+	modelName := getModelName(ctx, nil)
+	modelKey := gstr.CaseCamelLower(modelName)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
 
 	um := app.ModelFactory.GetModel(searchTable)
 	um2 := um.Clone()
@@ -204,8 +206,8 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 }
 
 func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
-	modelKey := ctx.Value(app.PathModelName).(string)
-	searchTable := g.Config().Get("model2Tbl." + gstr.CaseCamel(modelKey)).(string)
+	modelName := getModelName(ctx, nil)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
 	_, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
 		um2 := model.Clone()
 		if i.(g.Map)["id"] == nil {
@@ -235,8 +237,8 @@ func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
 }
 
 func (s *DaoBase) Delete(ctx context.Context, i interface{}) interface{} {
-	modelKey := ctx.Value(app.PathModelName).(string)
-	searchTable := g.Config().Get("model2Tbl." + gstr.CaseCamel(modelKey)).(string)
+	modelName := getModelName(ctx, nil)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
 	um := app.ModelFactory.GetModel(searchTable)
 	rtn, err := um.Where("id in (?)", i.(g.Map)["ids"]).Delete()
 	if err != nil {

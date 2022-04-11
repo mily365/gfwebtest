@@ -42,12 +42,18 @@ type RegisterRes struct {
 }
 
 //-------------------context info----------------------
-var (
-	ContextInfoKey  = "ContextInfoKey"
-	SessionKeyUser  = "SessionKeyUser"
-	TraceID         = "TraceID"
-	PathModelName   = "PathModelName"
-	ResponseTimeKey = "ResponseTimeKey"
+const (
+	ContextInfoKey   = "ContextInfoKey"
+	SessionKeyUser   = "SessionKeyUser"
+	TraceID          = "TraceID"
+	Path2ModelRegKey = "PathModelName"
+	ResponseTimeKey  = "ResponseTimeKey"
+)
+
+//config key
+const (
+	ModelToTbl = "model2Tbl"
+	Path2Model = "path2Model"
 )
 
 type ContextInfo struct {

@@ -27,7 +27,7 @@ func (p *ApiBase) Withalls(r *ghttp.Request) {
 }
 
 func (p *ApiBase) All(r *ghttp.Request) {
-	g.Log().Debug("ibase all....", r.Context().Value("tbl"))
+	g.Log().Debug("ibase all....", r.Context().Value(app.Path2ModelRegKey))
 	q := r.GetRequestMap()
 	s := p.Sve.All(r.Context(), q)
 	app.WrapSuccessRtn(s, "ok", r)
@@ -35,9 +35,7 @@ func (p *ApiBase) All(r *ghttp.Request) {
 }
 
 func (p *ApiBase) Create(r *ghttp.Request) {
-	modelKey := r.GetCtxVar(app.PathModelName).String()
-	g.Log().Debug(app.PathModelName)
-	g.Log().Debug(modelKey)
+	modelKey := r.GetCtxVar(app.Path2ModelRegKey).String()
 	typeStruct := app.TypePointerFuncFactory.GetStructPointer(modelKey)
 	r.Parse(typeStruct)
 	err := g.Validator().CheckStruct(typeStruct)
@@ -51,7 +49,7 @@ func (p *ApiBase) Create(r *ghttp.Request) {
 }
 
 func (p *ApiBase) Update(r *ghttp.Request) {
-	modelKey := r.GetCtxVar(app.PathModelName).String()
+	modelKey := r.GetCtxVar(app.Path2ModelRegKey).String()
 	typeStruct := app.TypePointerFuncFactory.GetStructPointer(modelKey)
 	r.Parse(typeStruct)
 	err := g.Validator().CheckStruct(typeStruct)

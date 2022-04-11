@@ -33,6 +33,7 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 		controlInfoMetaData.Title = "实体UI描述信息元数据"
 		xmodel.TX(tx).Delete("id>0")
 		app.ModelFactory.GetModel("control_info").TX(tx).Delete("id>0")
+
 		sid, err := xmodel.TX(tx).Data(controlInfoMetaData).OmitEmpty().InsertAndGetId()
 		if err != nil {
 			return err, nil
@@ -182,44 +183,43 @@ func (cg *initDataApi) Initdata(r *ghttp.Request) {
 			           ],
 						"refDicCode": false, "refModel": false }`,
 			},
-			//g.Map{
-			//	"sid":             sid,
-			//	"title":           "显示位置",
-			//	"propName":        "controlPosition",
-			//	"icon":            "",
-			//	"isKey":           false,
-			//	"isHidden":        false,
-			//	"order":           "0",
-			//	"controlType":     "search_single_select",
-			//	"groupName":       "选择属性",
-			//	"validatorType":   "none_无",
-			//	"controlPosition": "all_所有",
-			//	"extraInfo": `{
-			//			"isSort": false, "dynamicValues": [],
-			//			"options": [
-			//	            { key: ControlPosition.all, displayText: "所有" },
-			//				{ key: ControlPosition.list, displayText: "列表" },
-			//				{ key: ControlPosition.form, displayText: "表单" },
-			//				{ key: ControlPosition.search, displayText: "搜索" },
-			//            ],
-			//			"refDicCode": false, "refModel": false }`,
-			//},
-			//g.Map{
-			//	"sid":             sid,
-			//	"title":           "分组名",
-			//	"propName":        "groupName",
-			//	"icon":            "",
-			//	"isKey":           false,
-			//	"isHidden":        false,
-			//	"order":           "0",
-			//	"controlType":     "text_文本输入",
-			//	"groupName":       "文本属性",
-			//	"validatorType":   "none_无",
-			//	"controlPosition": "all_所有",
-			//	"extraInfo": `{
-			//			"isSort": false, "dynamicValues": []}
-			//    `,
-			//},
+			g.Map{
+				"sid":             sid,
+				"title":           "显示位置",
+				"propName":        "controlPosition",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "search_single_select",
+				"groupName":       "选择属性",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": [],
+						"options": [
+				            { "key": "ControlPosition.all", "displayText": "所有" },
+							{ "key": "ControlPosition.list", "displayText": "列表" },
+							{ "key": "ControlPosition.form", "displayText": "表单" },
+							{ "key": "ControlPosition.search", "displayText": "搜索"}
+			           ],
+						"refDicCode": false, "refModel": false }`,
+			},
+			g.Map{
+				"sid":             sid,
+				"title":           "分组名",
+				"propName":        "groupName",
+				"icon":            "",
+				"isKey":           false,
+				"isHidden":        false,
+				"order":           "0",
+				"controlType":     "text_文本输入",
+				"groupName":       "文本属性",
+				"validatorType":   "none_无",
+				"controlPosition": "all_所有",
+				"extraInfo": `{
+						"isSort": false, "dynamicValues": []}`,
+			},
 		}
 		_, err2 := app.ModelFactory.GetModel("control_info").TX(tx).Data(lst).Save()
 		if err2 != nil {
