@@ -14,6 +14,7 @@ var (
 	ApiAdapterPath     = "api.*"
 	ServiceAdapterPath = "service.*"
 	DaoAdapterPath     = "dao.*"
+	AopPrefix          = "middle"
 )
 
 type objectFactory struct {

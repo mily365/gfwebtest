@@ -73,6 +73,7 @@
 
 [path2Model]
    solution= "Solution"
+    #派生实体，后台无表，是对后台实体的组合
    solutionwithcontrolinfo="SolutionWithControlInfo"
    project= "Project"
    user = "User"

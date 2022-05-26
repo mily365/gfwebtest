@@ -31,11 +31,11 @@ func (*all) MiddlewareCORS(r *ghttp.Request) {
 
 func (*all) Ctx(r *ghttp.Request) {
 
-	if gstr.Contains(r.URL.Path, "api") {
+	if gstr.Contains(r.URL.Path, app.ApiPathPrefix) {
 		modelNameLower := gstr.Split(r.URL.Path, "/")[2]
 		modelNme := g.Config().Get("path2Model." + gstr.ToLower(modelNameLower))
 		if modelNme == nil {
-			panic("access url not exist!")
+			panic("access model not exist!")
 		}
 		////model type reg key
 		r.SetCtxVar(app.Path2ModelRegKey, gstr.CaseCamelLower(modelNme.(string)))

@@ -17,7 +17,7 @@ func init() {
 	s := g.Server()
 	for _, v := range app.AppContext.Keys() {
 		//bind middlewares
-		if gstr.HasPrefix(v, "middle") {
+		if gstr.HasPrefix(v, app.AopPrefix) {
 			strarray := gstr.Split(v, ".")
 			mstr := "/" + gstr.Join(strarray[1:], "/")
 			app.Logger.Debug(mstr, "vvvvvvvvvvvvvvvvvvvvvv")
@@ -32,7 +32,7 @@ func init() {
 			s.BindMiddleware(mstr, funcs...)
 		}
 		//bind api-handler
-		if gstr.HasPrefix(v, "api") {
+		if gstr.HasPrefix(v, app.ApiPathPrefix) {
 			rstr := "/" + gstr.Join(gstr.Split(v, "."), "/")
 			s.BindObject(rstr, app.AppContext.Get(v))
 		}

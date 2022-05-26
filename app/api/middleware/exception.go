@@ -38,7 +38,7 @@ func (*exp) ExceptionHandler(r *ghttp.Request) {
 		ctxInfo := r.GetCtxVar(app.ContextInfoKey).Interface().(*app.ContextInfo)
 		r.Response.WriteJsonExit(ctxInfo.RtnInfo)
 	} else {
-		if gstr.Contains(r.URL.Path, "api") {
+		if gstr.Contains(r.URL.Path, app.ApiPathPrefix) {
 			ctxInfo := r.GetCtxVar(app.ContextInfoKey).Interface().(*app.ContextInfo)
 			//成功执行操作后，记录审核日志到es
 

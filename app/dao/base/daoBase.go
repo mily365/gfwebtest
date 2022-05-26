@@ -168,6 +168,7 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	modelName, searchTable := getModelAndTableName(ctx, search)
+	//全部变成小写--计划
 	modelKey := gstr.CaseCamelLower(modelName)
 	if g.Config().GetBool("appInfo.enableEs") == true {
 		esRes := app.GetEsFactory().All(ctx, search, modelKey)
@@ -217,7 +218,10 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 		panic(e.Error())
 	}
 	mp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
-	app.GetEsFactory().Create(ctx, gconv.String(rid), rt.Json(), modelKey)
+	if g.Config().GetBool("appInfo.enableEs") == true {
+		app.GetEsFactory().Create(ctx, gconv.String(rid), rt.Json(), modelKey)
+	}
+
 	return mp
 }
 

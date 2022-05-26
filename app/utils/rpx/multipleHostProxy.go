@@ -15,6 +15,9 @@ func NewMultipleHostProxy() *multipleHostProxy {
 	return &multipleHostProxy{gmap.NewStrAnyMap(true)}
 }
 func (mhp *multipleHostProxy) GetOrSetSingleHostProxy(hostName string) *singleHostProxy {
+	if mhp.Contains(hostName) {
+		return mhp.Get(hostName).(*singleHostProxy)
+	}
 	proxy, err := NewSingleHostProxy2()
 	if err != nil {
 		panic(err.Error())
