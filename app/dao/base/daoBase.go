@@ -3,12 +3,14 @@ package base
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
 	"github.com/gogf/gf/util/gutil"
+	"reflect"
 	"sort"
 	"xpass/app"
 )
@@ -81,6 +83,9 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	//main model
 	modelName := getModelName(ctx, search)
 	modelKey := gstr.CaseCamelLower(modelName)
+
+	//
+
 	//fetch combined entity
 	sp := app.TypePointerFuncFactory.GetStructArrayPointer(modelKey)
 	metadata := gmeta.Data(sp)
@@ -117,6 +122,7 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 		}
 
 		searchTable := g.Config().Get("model2Tbl." + modelname)
+
 		if gutil.IsEmpty(searchTable) {
 			panic("please config model2tabl for " + modelname + " in config file!")
 		}
@@ -124,19 +130,23 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 			skip, pageSize := app.PageParam(search)
 			um := app.ModelFactory.GetModel(searchTable.(string))
 			var cntM = um.Clone()
+			g.Dump(gstr.CaseCamelLower(modelname), "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+			//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname))
 			if search["fields"] != nil && gstr.Trim(search["fields"].(string)) != "" {
-				err := um.Fields(search["fields"]).Where(search["queryForm"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
+				err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), um.Fields(search["fields"])).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
+				//err := um.Fields(search["fields"]).Where(whereForm).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				if err != nil {
 					panic(err.Error())
 				}
 			} else {
-				err := um.Fields().Where(search["queryForm"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
+				err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), um.Fields()).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				if err != nil {
 					panic(err.Error())
 				}
 			}
 
-			cnt, e := cntM.Count(search["queryForm"])
+			//cnt, e := cntM.Count(whereForm)
+			cnt, e := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), cntM).Count()
 			if e != nil {
 				panic(e.Error())
 			}
@@ -162,7 +172,46 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	rtn.Rows = sp
 	return rtn
 }
+func (s *DaoBase) buildWhereSqlMapByInputMap(search g.Map, modelKey string) g.Map {
+	rtn := g.Map{}
+	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	structType := reflect.TypeOf(searchForm).Elem().Elem()
+	for k, v := range search {
+		if v != nil {
+			//首字母大写
+			upperFirstCh := gstr.CaseCamel(k)
+			sf, isFind := structType.FieldByName(upperFirstCh)
+			if isFind == true {
+				tmpValue := sf.Tag.Get("orm")
+				rtn[tmpValue] = fmt.Sprintf("%s%s%s", "%", v, "%")
+			}
+		}
+	}
+	return rtn
+}
 
+// 针对传入的查询条件进行orm查询条件的转换
+func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, mdl *gdb.Model) *gdb.Model {
+	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	structType := reflect.TypeOf(searchForm).Elem().Elem()
+	for k, v := range search {
+		if v != nil {
+			//首字母大写
+			upperFirstCh := gstr.CaseCamel(k)
+			sf, isFind := structType.FieldByName(upperFirstCh)
+			if isFind == true {
+				tmpValue := sf.Tag.Get("orm")
+				if tmpValue == "id" {
+					mdl.Where(tmpValue, v)
+				} else {
+					mdl.WhereLike(tmpValue, fmt.Sprintf("%s%s%s", "%", v, "%"))
+				}
+			}
+		}
+
+	}
+	return mdl
+}
 func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	app.Logger.Debug("dao all called......")
 	rtn := new(app.SearchResult)
@@ -189,8 +238,10 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 		orderBy := search["orderBy"].([]interface{})
 		orderByStrings = gconv.SliceStr(orderBy)
 	}
-	err := um.Fields(search["fields"]).Where(search["queryForm"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
-	cnt, err := cntM.Count(search["queryForm"])
+	//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), modelKey)
+	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"])).OmitEmptyWhere().Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
+	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM).Count()
+	//cnt, err := cntM.OmitEmptyWhere().Count()
 	if sp == nil {
 		panic(err.Error())
 	}

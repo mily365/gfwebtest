@@ -44,6 +44,8 @@ func singleJoiningSlash(a, b string) string {
 	}
 	return a + b
 }
+
+//a--http://host
 func joinURLPath(a, b *url.URL) (path, rawpath string) {
 	if a.RawPath == "" && b.RawPath == "" {
 		return singleJoiningSlash(a.Path, b.Path), ""
@@ -68,6 +70,8 @@ func joinURLPath(a, b *url.URL) (path, rawpath string) {
 type director func(req *http.Request)
 
 func NewSingleHostProxy2() (*singleHostProxy, error) {
+	//导向函数，构造转发请求，包括请求的路径和查询参数
+	//反向代理利用这个函数，构造转发请求
 	directorFun := func(req *http.Request) {
 		//到达代理的来访目标req.Host,根据配置获取对应的要分发到的服务器
 		//根据请求的url  /serviceName/api/entity/aciotn
@@ -111,6 +115,7 @@ func NewSingleHostProxy2() (*singleHostProxy, error) {
 
 	}
 
+	//反向代理获取返回的响应后，调用修改响应
 	proxy.ModifyResponse = modifyResponse()
 	proxy.ErrorHandler = errorHandler()
 	return &singleHostProxy{proxy}, nil

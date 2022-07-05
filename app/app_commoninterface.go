@@ -5,6 +5,7 @@ import "context"
 
 // ApiOperation all api implement  this interface
 type ApiOperation interface {
+	InitAddForm(r *ghttp.Request)
 	All(r *ghttp.Request)
 	Withalls(r *ghttp.Request)
 	Scrollpage(r *ghttp.Request)

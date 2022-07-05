@@ -27,6 +27,14 @@ func main() {
 	//
 	mhp := rpx.NewMultipleHostProxy()
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		//基本认证支持
+		//auth := request.Header.Get("Authorization")
+		//fmt.Println(auth)
+		//if auth == "" {
+		//	writer.Header().Set("WWW-Authenticate", `Basic realm="您必须输入用户名和密码"`)
+		//	writer.WriteHeader(http.StatusUnauthorized)
+		//	return
+		//}
 		mhp.ServeHTTP(writer, request)
 	})
 

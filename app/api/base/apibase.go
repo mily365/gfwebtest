@@ -18,6 +18,13 @@ func (p *ApiBase) Scrollpage(r *ghttp.Request) {
 
 }
 
+func (p *ApiBase) Initaddform(r *ghttp.Request) {
+	g.Log().Debug("InitAddForm ....")
+	_ = r.GetRequestMap()
+	app.WrapSuccessRtn(nil, "ok", r)
+
+}
+
 func (p *ApiBase) Withalls(r *ghttp.Request) {
 	g.Log().Debug("Withalls alls....")
 	q := r.GetRequestMap()

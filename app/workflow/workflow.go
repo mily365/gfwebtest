@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/gogf/gf/frame/g"
-	"math"
 	"time"
 )
 
-func Power(n float64) float64 {
-	return math.Pow(2, n)
-}
+//func Power(n float64) float64 {
+//	return math.Pow(2, n)
+//}
 
 //负责创建和执行作业
 //进行站点服务注册
@@ -28,6 +27,9 @@ type TaskDescInfo struct {
 	NodeType TaskNodeType
 }
 
+//流程管理器，需要获取流程配置文件，读取配置
+//构造流程模板集合
+//根据传入的流程模板ID，创建一个作业实例
 type FlowTemplateManager struct {
 }
 
@@ -74,7 +76,7 @@ func NewTask(ctx JobContext, taskDescInfo TaskDescInfo) *Task {
 		OrPrev:   taskDescInfo.OrPrev,
 		Next:     taskDescInfo.Next,
 		NodeType: FlowNodeType | taskDescInfo.NodeType,
-		Status:   TaskStatus | TASK_READY,
+		Status:   TaskStatus & TaskReady,
 	}
 	return task
 }
