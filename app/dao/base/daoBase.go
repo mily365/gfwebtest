@@ -118,7 +118,8 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 		var orderByStrings = []string{""}
 		if search["orderBy"] != nil {
 			orderBy := search["orderBy"].([]interface{})
-			orderByStrings = gconv.SliceStr(orderBy)
+			//orderByStrings = gconv.SliceStr(orderBy)
+			orderByStrings = s.buildOrderBy(gconv.SliceStr(orderBy), gstr.CaseCamelLower(modelname))
 		}
 
 		searchTable := g.Config().Get("model2Tbl." + modelname)
@@ -190,6 +191,28 @@ func (s *DaoBase) buildWhereSqlMapByInputMap(search g.Map, modelKey string) g.Ma
 	return rtn
 }
 
+//
+func (s *DaoBase) buildOrderBy(orderByStr []string, modelKey string) []string {
+	var rtn []string
+	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	structType := reflect.TypeOf(searchForm).Elem().Elem()
+	for _, orderStr := range orderByStr {
+		g.Dump(orderStr)
+		inputProp := gstr.Split(orderStr, " ")[0]
+		g.Dump(inputProp)
+		upperFirstCh := gstr.CaseCamel(inputProp)
+		sf, isFind := structType.FieldByName(upperFirstCh)
+		if isFind == true {
+			tmpValue := sf.Tag.Get("orm")
+			g.Dump(inputProp)
+			orderStr = gstr.Replace(orderStr, inputProp, tmpValue)
+			rtn = append(rtn, orderStr)
+		}
+	}
+	g.Dump(rtn)
+	return rtn
+}
+
 // 针对传入的查询条件进行orm查询条件的转换
 func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, mdl *gdb.Model) *gdb.Model {
 	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
@@ -236,7 +259,7 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	var orderByStrings = []string{""}
 	if search["orderBy"] != nil {
 		orderBy := search["orderBy"].([]interface{})
-		orderByStrings = gconv.SliceStr(orderBy)
+		orderByStrings = s.buildOrderBy(gconv.SliceStr(orderBy), modelKey)
 	}
 	//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), modelKey)
 	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"])).OmitEmptyWhere().Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
