@@ -29,6 +29,8 @@ type ControlInfo struct {
 	Sid             int         `orm:"sid"              json:"sid"`             //
 	IsSort          int         `orm:"is_sort"          json:"isSort"`          //
 	SqlType         string      `orm:"sql_type"         json:"sqlType"`         //
+	SqlLength       int         `orm:"sql_length"       json:"sqlLength"`       //
+	SqlDefault      string      `orm:"sql_default"      json:"sqlDefault"`      //
 }
 
 // Project is the golang structure for table project.
