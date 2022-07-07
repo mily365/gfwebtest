@@ -27,6 +27,8 @@ type ControlInfo struct {
 	DeletedTime     *gtime.Time `orm:"deleted_time"     json:"deletedTime"`     //
 	Version         int         `orm:"version"          json:"version"`         //
 	Sid             int         `orm:"sid"              json:"sid"`             //
+	IsSort          int         `orm:"is_sort"          json:"isSort"`          //
+	SqlType         string      `orm:"sql_type"         json:"sqlType"`         //
 }
 
 // Project is the golang structure for table project.

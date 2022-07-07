@@ -205,7 +205,10 @@ func (s *DaoBase) buildOrderBy(orderByStr []string, modelKey string) []string {
 		if isFind == true {
 			tmpValue := sf.Tag.Get("orm")
 			g.Dump(inputProp)
-			orderStr = gstr.Replace(orderStr, inputProp, tmpValue)
+			if inputProp != "id" {
+				orderStr = gstr.Replace(orderStr, inputProp, tmpValue)
+			}
+
 			rtn = append(rtn, orderStr)
 		}
 	}
@@ -291,12 +294,12 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 	if e != nil {
 		panic(e.Error())
 	}
-	mp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	//mp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
 	if g.Config().GetBool("appInfo.enableEs") == true {
 		app.GetEsFactory().Create(ctx, gconv.String(rid), rt.Json(), modelKey)
 	}
 
-	return mp
+	return rt
 }
 
 func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
@@ -333,6 +336,10 @@ func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
 func (s *DaoBase) Delete(ctx context.Context, i interface{}) interface{} {
 	modelName := getModelName(ctx, nil)
 	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
+	_, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
+		//um2:=model.Clone()
+		return nil, nil
+	})
 	um := app.ModelFactory.GetModel(searchTable)
 	rtn, err := um.Where("id in (?)", i.(g.Map)["ids"]).Delete()
 	if err != nil {
