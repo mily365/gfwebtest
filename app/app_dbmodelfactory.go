@@ -1,9 +1,12 @@
 package app
 
 import (
+	"context"
 	"github.com/gogf/gf/container/gmap"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gutil"
 )
 
 //---------------mysql的模型工厂-------------------------
@@ -67,4 +70,41 @@ func (tpf *typePointerFuncFactory) GetStructArrayPointer(explicitName string) in
 
 func (tpf *typePointerFuncFactory) GetFuncMapForModelPointer() map[string]func() interface{} {
 	return tpf.mapFuncPointer
+}
+
+//返回CaseCamel的实体名称
+func GetModelName(ctx context.Context, search g.Map) string {
+	var modelName string = ""
+	//路径映射优先
+	path2ModelRegKey := ctx.Value(Path2ModelRegKey).(string)
+	if search != nil && search["model"] != nil {
+		modelName = search["model"].(string)
+	} else {
+		modelName = gstr.CaseCamel(path2ModelRegKey)
+	}
+	if gutil.IsEmpty(modelName) {
+		panic("please input model query param..")
+	}
+
+	return modelName
+}
+
+//返回CaseCamel的实体名称
+func GetModelAndTableName(ctx context.Context, search g.Map) (string, string) {
+	var modelName string = ""
+	//路径映射优先
+	path2ModelRegKey := ctx.Value(Path2ModelRegKey).(string)
+	if search != nil && search["model"] != nil {
+		modelName = search["model"].(string)
+	} else {
+		modelName = gstr.CaseCamel(path2ModelRegKey)
+	}
+	if gutil.IsEmpty(modelName) {
+		panic("please input model query param..")
+	}
+	searchTable := g.Config().Get(ModelToTbl + "." + modelName)
+	if searchTable == nil {
+		panic("please config model2table..")
+	}
+	return modelName, searchTable.(string)
 }

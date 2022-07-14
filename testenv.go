@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gogf/gf/text/gstr"
 	"os"
 )
 
@@ -12,8 +14,8 @@ type FieldType string
 
 const (
 	Id       FieldType = "id"
-	Int      FieldType = "number"
-	Text     FieldType = "text"
+	Int      FieldType = "int"
+	Varchar  FieldType = "varchar"
 	DateTime FieldType = "datetime"
 )
 
@@ -21,20 +23,67 @@ var tmpMap = map[string]interface{}{
 	"text": "ddd",
 }
 
-func makeSqlOneStrByFieldType(propName string, fieldType FieldType) string {
+func buildCreateSql(inputMap map[string]interface{}) string {
+	var rtn []string
+	var mapTmp = make(map[string]string)
+	for k, v := range inputMap {
+		if k == "sqlType" {
+			mapTmp["SqlType"] = v.(string)
+		}
+		if k == "propName" {
+			mapTmp["PropName"] = v.(string)
+		}
+		if k == "sqlLength" {
+			mapTmp["SqlLength"] = v.(string)
+		}
+		if k == "sqlDefault" {
+			if v == "" {
+				mapTmp["SqlDefault"] = "DEFAULT NULL"
+			} else {
+				mapTmp["SqlDefault"] = v.(string)
+			}
+		}
+		if k == "validateType" {
+			if v == "required" {
+				mapTmp["NotNull"] = "NOT NULL"
+			} else {
+				mapTmp["NotNull"] = ""
+			}
+		}
+
+		sqlOneStr := makeSqlOneStrByFieldType(mapTmp)
+		rtn = append(rtn, sqlOneStr)
+
+	}
+	//再添加ID
+	mapTmp["SqlType"] = "id"
+	mapTmp["PropName"] = "id"
+	mapTmp["SqlLength"] = "10"
+	mapTmp["NotNull"] = "NOT NULL"
+	mapTmp["SqlDefault"] = ""
+	sqlOneStr := makeSqlOneStrByFieldType(mapTmp)
+	rtn = append(rtn, sqlOneStr)
+	fmt.Println(rtn)
+	return gstr.Join(rtn, ",")
+}
+
+func makeSqlOneStrByFieldType(maps map[string]string) string {
 	rtn := ""
+	fieldType := FieldType(maps["SqlType"])
 	switch fieldType {
 	case Id:
-		rtn = `${FieldName} int(10) unsigned NOT NULL AUTO_INCREMENT`
+		rtn = `${PropName} int(${SqlLength}) unsigned ${NotNull} AUTO_INCREMENT`
 	case DateTime:
-		rtn = `${FieldName} datetime DEFAULT NULL`
-	default:
-		rtn = `${FieldName} varchar(${length}) NOT NULL,`
+		rtn = `${PropName} ${SqlType} ${NotNull} ${SqlDefault}`
+	case Int:
+		rtn = `${PropName} ${SqlType}(${SqlLength}) ${NotNull}  ${SqlDefault}`
+	case Varchar:
+		rtn = `${PropName} ${SqlType}(${SqlLength}) ${NotNull} ${SqlDefault}`
 	}
-	os.Expand(rtn, func(s string) string {
-		return "xxx"
+	singleStr := os.Expand(rtn, func(s string) string {
+		return maps[s]
 	})
-	return "rtn"
+	return singleStr
 }
 func main() {
 	//	sqlTmpl := `

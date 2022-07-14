@@ -21,7 +21,7 @@ type objectFactory struct {
 	*gmap.StrAnyMap
 }
 
-func (of *objectFactory) getObject(path string) interface{} {
+func (of *objectFactory) GetObject(path string) interface{} {
 	return of.Get(path)
 }
 func (of *objectFactory) RegisterObj(child interface{}) {

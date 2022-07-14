@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
@@ -265,8 +266,8 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 		orderByStrings = s.buildOrderBy(gconv.SliceStr(orderBy), modelKey)
 	}
 	//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), modelKey)
-	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"])).OmitEmptyWhere().Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
-	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM).Count()
+	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"])).OmitEmptyWhere().WhereNull("deleted_time").Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
+	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM).WhereNull("deleted_time").Count()
 	//cnt, err := cntM.OmitEmptyWhere().Count()
 	if sp == nil {
 		panic(err.Error())
@@ -301,6 +302,27 @@ func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 
 	return rt
 }
+func (s *DaoBase) Createtx(ctx context.Context, i interface{}, tx *gdb.TX, model *gdb.Model) interface{} {
+	g.Log().Debug("dao create..............................................................")
+	um2 := model.Clone()
+	rid, err := model.TX(tx).Data(i).InsertAndGetId()
+	if err != nil {
+		panic(err.Error())
+	}
+	rt, e := um2.TX(tx).Where(g.Map{"id": rid}).One()
+	if e != nil {
+		panic(e.Error())
+	}
+	//mp := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	return rt
+}
+
+func (s *DaoBase) CreateEsTx(ctx context.Context, rt interface{}, modelKey string) {
+	if g.Config().GetBool("appInfo.enableEs") == true {
+		app.GetEsFactory().Create(ctx, gconv.String(rt.(gdb.Record).Map()["id"]), rt.(gdb.Record).Json(), modelKey)
+	}
+
+}
 
 func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
 	modelName := getModelName(ctx, nil)
@@ -333,18 +355,45 @@ func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
 	return rtn
 }
 
+func (s *DaoBase) Updatetx(ctx context.Context, i interface{}, tx *gdb.TX, model *gdb.Model) interface{} {
+	um2 := model.Clone()
+	if i.(g.Map)["id"] == nil {
+		panic("lack id for update!")
+	}
+	if i.(g.Map)["version"] == nil {
+		panic("lack version for update!")
+	}
+	idvalue := i.(g.Map)["id"]
+	incversionPrev := gconv.Int(i.(g.Map)["version"].(json.Number).String())
+	incversion := incversionPrev + 1
+	i.(g.Map)["version"] = incversion
+	delete(i.(g.Map), "id")
+	rt, _ := um2.TX(tx).Where(g.Map{"id": idvalue, "version>=": incversion}).LockShared().One()
+	if rt != nil {
+		g.Log().Debug("update concurrent happened...!")
+		return nil
+	}
+	rtn2, err := model.TX(tx).Update(i.(g.Map), g.Map{"id": idvalue, "version<": incversion})
+	if err != nil {
+		panic(err.Error())
+	}
+	return rtn2
+}
+
 func (s *DaoBase) Delete(ctx context.Context, i interface{}) interface{} {
 	modelName := getModelName(ctx, nil)
 	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
-	_, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
-		//um2:=model.Clone()
-		return nil, nil
-	})
+
 	um := app.ModelFactory.GetModel(searchTable)
-	rtn, err := um.Where("id in (?)", i.(g.Map)["ids"]).Delete()
+	//rtn, err := um.Where("id in (?)", i.(g.Map)["ids"]).Delete()
+	m := map[string]interface{}{"deleted_time": gtime.Now()}
+	rtn, err := um.Where("id in (?)", i.(g.Map)["ids"]).Update(m)
 	if err != nil {
 		panic(err.Error())
 	}
 	g.Dump(rtn)
 	return rtn
+}
+func (s *DaoBase) Deletetx(ctx context.Context, i interface{}, tx *gdb.TX, model *gdb.Model) interface{} {
+	return nil
 }

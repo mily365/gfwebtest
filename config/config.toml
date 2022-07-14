@@ -84,7 +84,6 @@
    initdata = "InitData"
 [model2Tbl]
    Solution="solution"
-
    ControlInfo="control_info"
    Project="project"
    User = "user"

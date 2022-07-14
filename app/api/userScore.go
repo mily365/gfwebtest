@@ -24,6 +24,6 @@ func init() {
 func (p *userScoreApi) All(r *ghttp.Request) {
 	g.Log().Debug("UserScoreApi all....", r.Context().Value("tbl"))
 	q := r.GetRequestMap()
-	s := p.Sve.(app.CommonOperation).All(r.Context(), q)
+	s := p.Sve.(app.ServiceOperation).All(r.Context(), q)
 	app.WrapSuccessRtn(s, "ok", r)
 }

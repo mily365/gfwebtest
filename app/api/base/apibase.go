@@ -7,7 +7,7 @@ import (
 )
 
 type ApiBase struct {
-	Sve app.CommonOperation
+	Sve app.ServiceOperation
 }
 
 func (p *ApiBase) Scrollpage(r *ghttp.Request) {
@@ -54,6 +54,20 @@ func (p *ApiBase) Create(r *ghttp.Request) {
 	rtn := p.Sve.Create(r.Context(), toCreate)
 	app.WrapSuccessRtn(rtn, "ok", r)
 }
+func (p *ApiBase) Createtx(r *ghttp.Request) {
+	g.Log().Debug("Createtx")
+	modelKey := r.GetCtxVar(app.Path2ModelRegKey).String()
+	typeStruct := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	r.Parse(typeStruct)
+	err := g.Validator().CheckStruct(typeStruct)
+	g.Dump(typeStruct)
+	if err != nil {
+		panic(err.Error())
+	}
+	toCreate := r.GetRequestMap()
+	rtn := p.Sve.Createtx(r.Context(), toCreate)
+	app.WrapSuccessRtn(rtn, "ok", r)
+}
 
 func (p *ApiBase) Update(r *ghttp.Request) {
 	modelKey := r.GetCtxVar(app.Path2ModelRegKey).String()
@@ -67,6 +81,27 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 	toUpdate := r.GetRequestMap()
 	rtn := p.Sve.Update(r.Context(), toUpdate)
 	if rtn != nil {
+		appE := app.AppError{Msg: "update concurrent.....", Code: 1, Ext: rtn}
+		app.WrapFailRtn(appE, "has error!", r)
+	} else {
+		app.WrapSuccessRtn(rtn, "call success!", r)
+	}
+
+}
+func (p *ApiBase) Updatetx(r *ghttp.Request) {
+	modelKey := r.GetCtxVar(app.Path2ModelRegKey).String()
+	typeStruct := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	r.Parse(typeStruct)
+	err := g.Validator().CheckStruct(typeStruct)
+	g.Dump(typeStruct)
+	if err != nil {
+		panic(err.Error())
+	}
+	toUpdate := r.GetRequestMap()
+	rtn := p.Sve.Updatetx(r.Context(), toUpdate)
+	g.Dump(rtn)
+	//如果更新返回有值，那么判断为并发
+	if rtn == nil {
 		appE := app.AppError{Msg: "update concurrent.....", Code: 1, Ext: rtn}
 		app.WrapFailRtn(appE, "has error!", r)
 
