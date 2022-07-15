@@ -31,6 +31,7 @@ type ControlInfo struct {
 	SqlType         string      `orm:"sql_type"         json:"sqlType"`         //
 	SqlLength       int         `orm:"sql_length"       json:"sqlLength"`       //
 	SqlDefault      string      `orm:"sql_default"      json:"sqlDefault"`      //
+	SqlName         string      `orm:"sql_name"         json:"sqlName"`         //
 }
 
 // Project is the golang structure for table project.

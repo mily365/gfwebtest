@@ -10,6 +10,11 @@ type x struct {
 	M string `json:"m"`
 	N string `json:"n"`
 }
+
+var tmpMap = map[string]interface{}{
+	"text": "ddd",
+}
+
 type FieldType string
 
 const (
@@ -18,10 +23,6 @@ const (
 	Varchar  FieldType = "varchar"
 	DateTime FieldType = "datetime"
 )
-
-var tmpMap = map[string]interface{}{
-	"text": "ddd",
-}
 
 func buildCreateSql(inputMap map[string]interface{}) string {
 	var rtn []string

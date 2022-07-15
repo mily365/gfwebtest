@@ -2,13 +2,80 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/gogf/gf/database/gdb"
+	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
-	"xpass/app"
-
+	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
+	"os"
+	"xpass/app"
 	"xpass/app/service/base"
 )
+
+type FieldType string
+
+const (
+	Id       FieldType = "id"
+	Int      FieldType = "int"
+	Varchar  FieldType = "varchar"
+	DateTime FieldType = "datetime"
+)
+
+func buildCreateSql(inputMap map[string]interface{}) string {
+	for k, v := range inputMap {
+		g.Dump(k, "kkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+		if k == "validatorType" {
+			f := gstr.Split(v.(string), "_")[0]
+			if f == "required" {
+				inputMap["NotNull"] = "NOT NULL"
+			} else {
+				inputMap["NotNull"] = "NULL"
+			}
+		}
+
+	}
+	sqlOneStr := makeSqlOneStrByFieldType(inputMap)
+	return sqlOneStr
+}
+
+func makeSqlOneStrByFieldType(maps map[string]interface{}) string {
+	rtn := ""
+	fieldType := maps["sqlType"].(string)
+	fieldType = gstr.Split(fieldType, "_")[0]
+	switch fieldType {
+	case "id":
+		rtn = `${propName} int(${sqlLength}) unsigned ${NotNull} AUTO_INCREMENT`
+	case "datetime":
+		rtn = `${propName} timestamp ${NotNull} ${sqlDefault}`
+	case "int":
+		rtn = `${propName} ${sqlType}(${sqlLength}) ${NotNull}  ${sqlDefault}`
+	case "varchar":
+		rtn = `${propName} ${sqlType}(${sqlLength}) ${NotNull} ${sqlDefault}`
+	}
+	singleStr := os.Expand(rtn, func(s string) string {
+		rtnStr := gconv.String(maps[s])
+		if gstr.Contains(rtnStr, "_") {
+			g.Dump(rtnStr, "dddddddddddddddddddddddddddddddd")
+			rtnStr = gstr.Split(rtnStr, "_")[0]
+		}
+		if s == "sqlDefault" {
+			if rtnStr != "" {
+				rtnStr = fmt.Sprintf("DEFAULT %s", rtnStr)
+			} else {
+				if fieldType == "varchar" && maps["NotNull"] != "NULL" {
+					rtnStr = "DEFAULT '' "
+				} else {
+					rtnStr = "DEFAULT NULL"
+				}
+
+			}
+		}
+		return rtnStr
+	})
+	return singleStr
+}
 
 var (
 	SolutionSve *solutionSve
@@ -34,13 +101,37 @@ func (s *solutionSve) CreateTable(ctx context.Context, i interface{}) interface{
 		//利用方案的bizCode作为表名
 		//约定按照appName_sulutionName
 		sl, _ := model.FindOne(i)
+		g.Dump(sl.Map()["biz_code"])
 		searchTable2 := g.Config().Get(app.ModelToTbl + "." + "ControlInfo").(string)
 		cm := app.ModelFactory.GetModel(searchTable2)
 		sp := app.TypePointerFuncFactory.GetStructArrayPointer("controlInfo")
 		_ = cm.Where(map[string]interface{}{"sid": sl.Map()["id"]}).Scan(sp)
-		g.Dump(sp)
+		//buildCreateSql(sp)
+		bys, _ := gjson.Encode(sp)
+		//mps := gconv.Map(bys)
+		//m := gconv.Map(sp)
+		mps := gconv.SliceMap(bys)
+		var rtnTmps []string
+		rtnTmps = append(rtnTmps, fmt.Sprintf("CREATE TABLE %s ( id int(11) NOT NULL AUTO_INCREMENT", sl.Map()["biz_code"].(string)))
+		for _, v := range mps {
+			sqlStr := buildCreateSql(v)
+			rtnTmps = append(rtnTmps, sqlStr)
+		}
+		rtnTmps = append(rtnTmps, "PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;")
+
+		g.Dump(gstr.Join(rtnTmps, ",\n"))
+
 		return nil, nil
 	})
 
 	return rtn
 }
+
+//再添加ID
+//inputMap["SqlType"] = "id"
+//inputMap["PropName"] = "id"
+//inputMap["SqlLength"] = "10"
+//inputMap["NotNull"] = "NOT NULL"
+//inputMap["SqlDefault"] = ""
+//sqlOneStr := makeSqlOneStrByFieldType(inputMap)
+//rtn = append(rtn, sqlOneStr)
