@@ -97,7 +97,7 @@ func (s *solutionSve) CreateTable(ctx context.Context, i interface{}) interface{
 	modelName := app.GetModelName(ctx, nil)
 	//modelKey := gstr.CaseCamelLower(modelName)
 	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
-	_, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
+	errors, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
 		//利用方案的bizCode作为表名
 		//约定按照appName_sulutionName
 		sl, _ := model.FindOne(i)
@@ -118,12 +118,13 @@ func (s *solutionSve) CreateTable(ctx context.Context, i interface{}) interface{
 			rtnTmps = append(rtnTmps, sqlStr)
 		}
 		rtnTmps = append(rtnTmps, "PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;")
-
-		g.Dump(gstr.Join(rtnTmps, ",\n"))
-
-		return nil, nil
+		sqlCreateStr := gstr.Join(rtnTmps, ",\n")
+		res, er := g.DB().Exec(sqlCreateStr)
+		return er, res
 	})
-
+	if errors != nil {
+		panic(errors)
+	}
 	return rtn
 }
 
