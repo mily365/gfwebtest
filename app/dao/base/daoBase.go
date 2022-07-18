@@ -345,6 +345,7 @@ func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
 			g.Log().Debug("update concurrent happened...!")
 			return nil, rt
 		}
+		i.(g.Map)["updated_time"] = gtime.Now()
 		_, err := model.TX(tx).Update(i.(g.Map), g.Map{"id": idvalue, "version<": incversion})
 		if err != nil {
 			panic(err.Error())
@@ -373,6 +374,7 @@ func (s *DaoBase) Updatetx(ctx context.Context, i interface{}, tx *gdb.TX, model
 		g.Log().Debug("update concurrent happened...!")
 		return nil
 	}
+	i.(g.Map)["updated_time"] = gtime.Now()
 	rtn2, err := model.TX(tx).Update(i.(g.Map), g.Map{"id": idvalue, "version<": incversion})
 	if err != nil {
 		panic(err.Error())

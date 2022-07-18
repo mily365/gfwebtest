@@ -51,6 +51,7 @@ type Solution struct {
 	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
 	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
 	Version     int         `orm:"version"      json:"version"`     //
+	Lang        string      `orm:"lang"         json:"lang"`        // 语言编码
 }
 
 // User is the golang structure for table user.
