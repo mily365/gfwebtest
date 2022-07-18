@@ -91,7 +91,7 @@ func (p *ApiBase) Update(r *ghttp.Request) {
 func (p *ApiBase) Updatetx(r *ghttp.Request) {
 	modelKey := r.GetCtxVar(app.Path2ModelRegKey).String()
 	typeStruct := app.TypePointerFuncFactory.GetStructPointer(modelKey)
-	r.Parse(typeStruct)
+	_ = r.Parse(typeStruct)
 	err := g.Validator().CheckStruct(typeStruct)
 	g.Dump(typeStruct)
 	if err != nil {
@@ -115,5 +115,14 @@ func (p *ApiBase) Updatetx(r *ghttp.Request) {
 func (p *ApiBase) Delete(r *ghttp.Request) {
 	toDelete := r.GetRequestMap()
 	rtn := p.Sve.Delete(r.Context(), toDelete)
+	app.WrapSuccessRtn(rtn, "ok", r)
+}
+
+/**
+接受{id:"xx",relation:{modelName:"xxx",fk:""}}
+*/
+func (p *ApiBase) Copytx(r *ghttp.Request) {
+	toCopy := r.GetRequestMap()
+	rtn := p.Sve.Copytx(r.Context(), toCopy)
 	app.WrapSuccessRtn(rtn, "ok", r)
 }

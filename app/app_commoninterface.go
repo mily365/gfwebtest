@@ -18,6 +18,7 @@ type ApiOperation interface {
 	Createtx(r *ghttp.Request)
 	Updatetx(r *ghttp.Request)
 	Deletetx(r *ghttp.Request)
+	Copytx(r *ghttp.Request)
 }
 type ServiceOperation interface {
 	All(context.Context, interface{}) interface{}
@@ -29,6 +30,7 @@ type ServiceOperation interface {
 	Createtx(context.Context, interface{}) interface{}
 	Updatetx(context.Context, interface{}) interface{}
 	Deletetx(context.Context, interface{}) interface{}
+	Copytx(context.Context, interface{}) interface{}
 }
 
 // CommonOperation all service implement this interface
@@ -43,4 +45,5 @@ type DaoOperation interface {
 	CreateEsTx(context.Context, interface{}, string)
 	Updatetx(context.Context, interface{}, *gdb.TX, *gdb.Model) interface{}
 	Deletetx(context.Context, interface{}, *gdb.TX, *gdb.Model) interface{}
+	Copytx(context.Context, interface{}, *gdb.TX, *gdb.Model) interface{}
 }

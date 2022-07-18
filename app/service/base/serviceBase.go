@@ -6,6 +6,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/text/gstr"
 	"xpass/app"
+	"xpass/app/dao/base"
 )
 
 type ServiceBase struct {
@@ -65,5 +66,32 @@ func (s *ServiceBase) Deletetx(ctx context.Context, i interface{}) interface{} {
 		//s.Dao.CreateEsTx(ctx, outRtn, modelKey)
 		return nil, outRtn
 	})
+	return rtn
+}
+
+func (s *ServiceBase) Copytx(ctx context.Context, i interface{}) interface{} {
+	modelName := app.GetModelName(ctx, nil)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
+	_, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
+		outRtnId := s.Dao.Copytx(ctx, i, tx, model)
+		//s.Dao.CreateEsTx(ctx, outRtn, modelKey)
+		if i.(g.Map)["relations"] != nil {
+			for _, obj := range i.(g.Map)["relations"].(g.Array) {
+				mObj := obj.(g.Map)
+				relStr := mObj["key"].(string)
+				relArray := gstr.Split(relStr, "~")
+				bizCode := relArray[0]
+				fkStr := relArray[1]
+				tMap := g.Map{"originId": i.(g.Map)["id"], "bizCode": bizCode, "fkStr": fkStr, "fkNewId": outRtnId}
+				_ = s.Dao.(base.SolutionDaoInterface).CopyRelChildren(ctx, tMap, tx, model)
+				//按照bizCode查询出方案，按照方案中的modelName,找到具体的表
+				//按照fkStr构造查询，查询出关联的所有记录
+				//然后遍历去掉id,设置新的fkStr的值
+
+			}
+		}
+		return nil, outRtnId
+	})
+
 	return rtn
 }

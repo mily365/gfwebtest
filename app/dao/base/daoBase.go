@@ -192,6 +192,19 @@ func (s *DaoBase) buildWhereSqlMapByInputMap(search g.Map, modelKey string) g.Ma
 	return rtn
 }
 
+func (s *DaoBase) transJsonPropToSqlField(jsonProp string, modelKey string) string {
+	structP := app.TypePointerFuncFactory.GetStructPointer(modelKey)
+	structType := reflect.TypeOf(structP).Elem().Elem()
+
+	sf, isFind := structType.FieldByName(gstr.CaseCamel(jsonProp))
+	if isFind == true {
+		tmpValue := sf.Tag.Get("orm")
+		return tmpValue
+	} else {
+		return ""
+	}
+}
+
 //
 func (s *DaoBase) buildOrderBy(orderByStr []string, modelKey string) []string {
 	var rtn []string
@@ -397,5 +410,48 @@ func (s *DaoBase) Delete(ctx context.Context, i interface{}) interface{} {
 	return rtn
 }
 func (s *DaoBase) Deletetx(ctx context.Context, i interface{}, tx *gdb.TX, model *gdb.Model) interface{} {
+	return nil
+}
+func (s *DaoBase) Copytx(ctx context.Context, i interface{}, tx *gdb.TX, model *gdb.Model) interface{} {
+	um2 := model.Clone()
+	if i.(g.Map)["id"] == nil {
+		panic("lack id for copy!")
+	}
+	idValue := i.(g.Map)["id"]
+	rec, _ := um2.FindOne(g.Map{"id": idValue})
+	recMap := rec.Map()
+	delete(recMap, "id")
+	recMap["created_time"] = gtime.Now()
+	recMap["updated_time"] = gtime.Now()
+
+	keyPropName := i.(g.Map)["keyPropName"].(string)
+	keyPropNameSqlField := gstr.CaseSnakeFirstUpper(keyPropName)
+	recMap[keyPropName] = "copyOf-" + recMap[keyPropNameSqlField].(string)
+	lid, _ := um2.TX(tx).InsertAndGetId(recMap)
+	return lid
+}
+func (s *DaoBase) CopyRelChildren(ctx context.Context, i interface{}, tx *gdb.TX, model *gdb.Model) interface{} {
+	um2 := model.Clone()
+	bizCode := i.(g.Map)["bizCode"]
+	fkStr := gstr.ToLower(i.(g.Map)["fkStr"].(string))
+	originId := i.(g.Map)["originId"]
+	fkNewId := i.(g.Map)["fkNewId"]
+
+	recd, _ := um2.FindOne(g.Map{"biz_code": bizCode})
+
+	relModelName := recd.Map()["model_name"].(string)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + relModelName).(string)
+	relModel := app.ModelFactory.GetModel(searchTable)
+	recs, _ := relModel.All(g.Map{fkStr: originId})
+
+	for _, v := range recs {
+		g.Dump("rel...................................................", v, "rel...................................................")
+		recdMap := v.Map()
+		delete(recdMap, "id")
+		recdMap["created_time"] = gtime.Now()
+		recdMap["updated_time"] = gtime.Now()
+		recdMap[fkStr] = fkNewId
+		_, _ = relModel.TX(tx).Insert(recdMap)
+	}
 	return nil
 }
