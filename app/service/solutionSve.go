@@ -51,8 +51,12 @@ func makeSqlOneStrByFieldType(maps map[string]interface{}) string {
 		rtn = `${propName} timestamp ${NotNull} ${sqlDefault}`
 	case "int":
 		rtn = `${propName} ${sqlType}(${sqlLength}) ${NotNull}  ${sqlDefault}`
+	case "tinyint":
+		rtn = `${propName} ${sqlType}(1) ${NotNull}  ${sqlDefault}`
 	case "varchar":
 		rtn = `${propName} ${sqlType}(${sqlLength}) ${NotNull} ${sqlDefault}`
+	case "json":
+		rtn = `${propName} ${sqlType} ${NotNull} ${sqlDefault}`
 	}
 	singleStr := os.Expand(rtn, func(s string) string {
 		rtnStr := gconv.String(maps[s])
