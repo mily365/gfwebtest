@@ -135,20 +135,20 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 			g.Dump(gstr.CaseCamelLower(modelname), "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 			//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname))
 			if search["fields"] != nil && gstr.Trim(search["fields"].(string)) != "" {
-				err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), um.Fields(search["fields"]), search["quickSearch"].(g.Map)).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
+				err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), um.Fields(search["fields"]), search["quickSearch"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				//err := um.Fields(search["fields"]).Where(whereForm).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				if err != nil {
 					panic(err.Error())
 				}
 			} else {
-				err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), um.Fields(), search["quickSearch"].(g.Map)).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
+				err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), um.Fields(), search["quickSearch"]).Offset(skip).Limit(pageSize).Order(orderByStrings...).ScanList(sp, modelname)
 				if err != nil {
 					panic(err.Error())
 				}
 			}
 
 			//cnt, e := cntM.Count(whereForm)
-			cnt, e := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), cntM, search["quickSearch"].(g.Map)).Count()
+			cnt, e := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), gstr.CaseCamelLower(modelname), cntM, search["quickSearch"]).Count()
 			if e != nil {
 				panic(e.Error())
 			}
@@ -231,7 +231,7 @@ func (s *DaoBase) buildOrderBy(orderByStr []string, modelKey string) []string {
 }
 
 // 针对传入的查询条件进行orm查询条件的转换
-func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, mdl *gdb.Model, quickMap g.Map) *gdb.Model {
+func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, mdl *gdb.Model, quickMap2 interface{}) *gdb.Model {
 	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
 	structType := reflect.TypeOf(searchForm).Elem().Elem()
 	for k, v := range search {
@@ -250,20 +250,22 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 		}
 
 	}
-	fs := gstr.Split(quickMap["quickFields"].(string), ",")
-	likeStr := quickMap["quickValue"].(string)
-	if len(fs) > 0 {
-		for _, v := range fs {
-			//首字母大写
-			upperFirstCh := gstr.CaseCamel(v)
-			sf, isFind := structType.FieldByName(upperFirstCh)
-			if isFind == true {
-				tmpValue := sf.Tag.Get("orm")
-				mdl.WhereOrLike(tmpValue, fmt.Sprintf("%s%s%s", "%", likeStr, "%"))
+	if quickMap2 != nil {
+		quickMap := quickMap2.(g.Map)
+		fs := gstr.Split(quickMap["quickFields"].(string), ",")
+		likeStr := quickMap["quickValue"].(string)
+		if len(fs) > 0 {
+			for _, v := range fs {
+				//首字母大写
+				upperFirstCh := gstr.CaseCamel(v)
+				sf, isFind := structType.FieldByName(upperFirstCh)
+				if isFind == true {
+					tmpValue := sf.Tag.Get("orm")
+					mdl.WhereOrLike(tmpValue, fmt.Sprintf("%s%s%s", "%", likeStr, "%"))
+				}
 			}
 		}
 	}
-
 	return mdl
 }
 
@@ -295,8 +297,8 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	}
 	g.Dump(search["quickSearch"], "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
 	//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), modelKey)
-	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"]), search["quickSearch"].(g.Map)).OmitEmptyWhere().WhereNull("deleted_time").Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
-	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM, search["quickSearch"].(g.Map)).WhereNull("deleted_time").Count()
+	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"]), search["quickSearch"]).OmitEmptyWhere().WhereNull("deleted_time").Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
+	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM, search["quickSearch"]).WhereNull("deleted_time").Count()
 	//cnt, err := cntM.OmitEmptyWhere().Count()
 	if sp == nil {
 		panic(err.Error())
