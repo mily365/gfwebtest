@@ -118,7 +118,7 @@ type UserTest struct {
 type App struct {
 	Id           int         `orm:"id,primary"   json:"id"`           //
 	Code         string      `orm:"code"         json:"code"`         //
-	Name         string      `orm:"name"         json:"name"`         //
+	AppName      string      `orm:"appName"      json:"appName"`      //
 	ResourceJson string      `orm:"resourceJson" json:"resourceJson"` //
 	CreatedTime  *gtime.Time `orm:"created_time" json:"createdTime"`  //
 	UpdatedTime  *gtime.Time `orm:"updated_time" json:"updatedTime"`  //
