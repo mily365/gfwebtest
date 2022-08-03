@@ -76,6 +76,7 @@
    controlinfo="ControlInfo"
     #派生实体，后台无表，是对后台实体的组合
    solutionwithcontrolinfo="SolutionWithControlInfo"
+   app= "App"
    project= "Project"
    user = "User"
    userdetail = "UserDetail"
@@ -85,6 +86,7 @@
 [model2Tbl]
    Solution="solution"
    ControlInfo="control_info"
+   App= "xpass_app"
    Project="project"
    User = "user"
    UserDetail = "user_detail"

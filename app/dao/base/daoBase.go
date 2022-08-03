@@ -252,8 +252,11 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 	}
 	if quickMap2 != nil {
 		quickMap := quickMap2.(g.Map)
+		if quickMap["quickValue"] == nil {
+			return mdl
+		}
 		fs := gstr.Split(quickMap["quickFields"].(string), ",")
-		likeStr := quickMap["quickValue"].(string)
+		likeStr := gstr.Trim(quickMap["quickValue"].(string))
 		if len(fs) > 0 {
 			for _, v := range fs {
 				//首字母大写

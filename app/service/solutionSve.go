@@ -9,6 +9,7 @@ import (
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/gmeta"
+	"github.com/gogf/gf/util/gutil"
 	"os"
 	"xpass/app"
 	"xpass/app/service/base"
@@ -25,7 +26,7 @@ const (
 
 func buildCreateSql(inputMap map[string]interface{}) string {
 	for k, v := range inputMap {
-		g.Dump(k, "kkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+		g.Dump(k, "==", v)
 		if k == "validatorType" {
 			f := gstr.Split(v.(string), "_")[0]
 			if f == "required" {
@@ -59,9 +60,9 @@ func makeSqlOneStrByFieldType(maps map[string]interface{}) string {
 		rtn = `${propName} ${sqlType} ${NotNull} ${sqlDefault}`
 	}
 	singleStr := os.Expand(rtn, func(s string) string {
+		g.Dump(s, maps)
 		rtnStr := gconv.String(maps[s])
 		if gstr.Contains(rtnStr, "_") {
-			g.Dump(rtnStr, "dddddddddddddddddddddddddddddddd")
 			rtnStr = gstr.Split(rtnStr, "_")[0]
 		}
 		if s == "sqlDefault" {
@@ -119,11 +120,18 @@ func (s *solutionSve) CreateTable(ctx context.Context, i interface{}) interface{
 		rtnTmps = append(rtnTmps, fmt.Sprintf("CREATE TABLE %s ( id int(11) NOT NULL AUTO_INCREMENT", sl.Map()["biz_code"].(string)))
 		for _, v := range mps {
 			sqlStr := buildCreateSql(v)
-			rtnTmps = append(rtnTmps, sqlStr)
+			if !gutil.IsEmpty(sqlStr) {
+				rtnTmps = append(rtnTmps, sqlStr)
+			}
 		}
+		rtnTmps = append(rtnTmps, "created_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP")
+		rtnTmps = append(rtnTmps, "updated_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP")
+		rtnTmps = append(rtnTmps, "deleted_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP")
 		rtnTmps = append(rtnTmps, "PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;")
 		sqlCreateStr := gstr.Join(rtnTmps, ",\n")
+		g.Dump(sqlCreateStr, "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
 		res, er := g.DB().Exec(sqlCreateStr)
+		//生成表以后在实体文件内生成实体代码
 		return er, res
 	})
 	if errors != nil {

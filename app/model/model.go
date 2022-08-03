@@ -32,7 +32,13 @@ type ControlInfo struct {
 	SqlLength       int         `orm:"sql_length"       json:"sqlLength"`       //
 	SqlDefault      string      `orm:"sql_default"      json:"sqlDefault"`      //
 	SqlName         string      `orm:"sql_name"         json:"sqlName"`         //
-	IsQuickSearch   string      `orm:"is_quick_search"  json:"isQuickSearch"`   //
+	IsQuickSearch   int         `orm:"is_quick_search"  json:"isQuickSearch"`   //
+	AuthType        string      `orm:"auth_type"        json:"authType"`        //
+}
+
+// NewTable is the golang structure for table new_table.
+type NewTable struct {
+	IdnewTable int `orm:"idnew_table,primary" json:"idnewTable"` //
 }
 
 // Project is the golang structure for table project.
@@ -52,7 +58,7 @@ type Solution struct {
 	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
 	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
 	Version     int         `orm:"version"      json:"version"`     //
-	Lang        string      `orm:"lang"         json:"lang"`        // 语言编码
+	Lang        string      `orm:"lang"         json:"lang"`        //
 }
 
 // User is the golang structure for table user.
@@ -64,6 +70,25 @@ type User struct {
 	DeletedAt *gtime.Time `orm:"deleted_at" json:"deletedAt"` //
 	Version   int         `orm:"version"    json:"version"`   //
 	Age       int         `orm:"age"        json:"age"`       //
+}
+
+// User2 is the golang structure for table user2.
+type User2 struct {
+	Id        uint        `orm:"id,primary" json:"id"`        //
+	Name      string      `orm:"name"       json:"name"`      //
+	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` //
+	UpdatedAt *gtime.Time `orm:"updated_at" json:"updatedAt"` //
+	DeletedAt *gtime.Time `orm:"deleted_at" json:"deletedAt"` //
+	Version   int         `orm:"version"    json:"version"`   //
+	Age       int         `orm:"age"        json:"age"`       //
+}
+
+// User34 is the golang structure for table user34.
+type User34 struct {
+	Id    int         `orm:"id,primary" json:"id"`    //
+	Name  string      `orm:"name"       json:"name"`  //
+	Age   int         `orm:"age"        json:"age"`   //
+	Birth *gtime.Time `orm:"birth"      json:"birth"` //
 }
 
 // UserDetail is the golang structure for table user_detail.
@@ -78,4 +103,24 @@ type UserScore struct {
 	Uid    uint   `orm:"uid"        json:"uid"`    //
 	Score  uint   `orm:"score"      json:"score"`  //
 	Course string `orm:"course"     json:"course"` //
+}
+
+// UserTest is the golang structure for table user_test.
+type UserTest struct {
+	Id          int         `orm:"id,primary"   json:"id"`          //
+	Name        string      `orm:"name"         json:"name"`        //
+	Age         int         `orm:"age"          json:"age"`         //
+	Birth       *gtime.Time `orm:"birth"        json:"birth"`       //
+	UserTestcol string      `orm:"user_testcol" json:"userTestcol"` //
+}
+
+// App is the golang structure for table xpass_app.
+type App struct {
+	Id           int         `orm:"id,primary"   json:"id"`           //
+	Code         string      `orm:"code"         json:"code"`         //
+	Name         string      `orm:"name"         json:"name"`         //
+	ResourceJson string      `orm:"resourceJson" json:"resourceJson"` //
+	CreatedTime  *gtime.Time `orm:"created_time" json:"createdTime"`  //
+	UpdatedTime  *gtime.Time `orm:"updated_time" json:"updatedTime"`  //
+	DeletedTime  *gtime.Time `orm:"deleted_time" json:"deletedTime"`  //
 }
