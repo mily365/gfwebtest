@@ -162,10 +162,10 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 			um2 := app.ModelFactory.GetModel(searchTable.(string)).Clone()
 			g.Log().Debug(depEntity + "---" + depEntityProperty + "tablekey---" + tablekey)
 			if search["subFields"] != nil {
-				um2.Fields(search["subFields"].(g.Map)[modelname]).Where(tablekey, gdb.ListItemValuesUnique(sp, depEntity, depEntityProperty)).
+				um2.Fields(search["subFields"].(g.Map)[modelname]).Where(tablekey, gdb.ListItemValuesUnique(sp, depEntity, depEntityProperty)).WhereNull("deleted_time").
 					ScanList(sp, modelname, depEntity, tablekey+":"+depEntityProperty)
 			} else {
-				um2.Fields().Where(tablekey, gdb.ListItemValuesUnique(sp, depEntity, depEntityProperty)).
+				um2.Fields().Where(tablekey, gdb.ListItemValuesUnique(sp, depEntity, depEntityProperty)).WhereNull("deleted_time").
 					ScanList(sp, modelname, depEntity, tablekey+":"+depEntityProperty)
 			}
 
@@ -269,7 +269,7 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 			}
 		}
 	}
-	return mdl
+	return mdl.WhereNull("deleted_time")
 }
 
 func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {

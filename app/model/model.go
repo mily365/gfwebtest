@@ -123,4 +123,5 @@ type App struct {
 	CreatedTime  *gtime.Time `orm:"created_time" json:"createdTime"`  //
 	UpdatedTime  *gtime.Time `orm:"updated_time" json:"updatedTime"`  //
 	DeletedTime  *gtime.Time `orm:"deleted_time" json:"deletedTime"`  //
+	Version      int         `orm:"version"      json:"version"`      //
 }
