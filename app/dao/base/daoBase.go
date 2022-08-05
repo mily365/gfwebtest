@@ -241,11 +241,13 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 			sf, isFind := structType.FieldByName(upperFirstCh)
 			if isFind == true {
 				tmpValue := sf.Tag.Get("orm")
-				if tmpValue == "id" {
-					mdl.Where(tmpValue, v)
-				} else {
-					mdl.WhereLike(tmpValue, fmt.Sprintf("%s%s%s", "%", v, "%"))
-				}
+				mdl.Where(tmpValue, v)
+
+				//if tmpValue == "id" {
+				//	mdl.Where(tmpValue, v)
+				//} else {
+				//	mdl.WhereLike(tmpValue, fmt.Sprintf("%s%s%s", "%", v, "%"))
+				//}
 			}
 		}
 
