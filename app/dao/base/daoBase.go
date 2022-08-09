@@ -259,6 +259,7 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 		}
 		fs := gstr.Split(quickMap["quickFields"].(string), ",")
 		likeStr := gstr.Trim(quickMap["quickValue"].(string))
+		gm := g.SliceStr{}
 		if len(fs) > 0 {
 			for _, v := range fs {
 				//首字母大写
@@ -266,10 +267,13 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 				sf, isFind := structType.FieldByName(upperFirstCh)
 				if isFind == true {
 					tmpValue := sf.Tag.Get("orm")
-					mdl.WhereOrLike(tmpValue, fmt.Sprintf("%s%s%s", "%", likeStr, "%"))
+					//gm[tmpValue] = fmt.Sprintf("%s%s%s", "%", likeStr, "%")
+					gm = append(gm, fmt.Sprintf(" %s like  '%s%s%s'", tmpValue, "%", likeStr, "%"))
+
 				}
 			}
 		}
+		mdl.Where(gstr.Join(gm, " or "))
 	}
 	return mdl.WhereNull("deleted_time")
 }
@@ -302,8 +306,8 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 	}
 	g.Dump(search["quickSearch"], "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
 	//whereForm := s.buildWhereSqlMapByInputMap(search["queryForm"].(g.Map), modelKey)
-	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"]), search["quickSearch"]).OmitEmptyWhere().WhereNull("deleted_time").Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
-	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM, search["quickSearch"]).WhereNull("deleted_time").Count()
+	err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, um.Fields(search["fields"]), search["quickSearch"]).OmitEmptyWhere().Offset(skip).Limit(pageSize).Order(orderByStrings...).Scan(sp)
+	cnt, err := s.buildWhereLikeModelByInputMap(search["queryForm"].(g.Map), modelKey, cntM, search["quickSearch"]).Count()
 	//cnt, err := cntM.OmitEmptyWhere().Count()
 	if sp == nil {
 		panic(err.Error())
