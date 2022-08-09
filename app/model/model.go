@@ -34,6 +34,8 @@ type ControlInfo struct {
 	SqlName         string      `orm:"sql_name"         json:"sqlName"`         //
 	IsQuickSearch   int         `orm:"is_quick_search"  json:"isQuickSearch"`   //
 	AuthType        string      `orm:"auth_type"        json:"authType"`        //
+	IsFormat        int         `orm:"is_format"        json:"isFormat"`        //
+	IsDisabled      int         `orm:"is_disabled"      json:"isDisabled"`      //
 }
 
 // NewTable is the golang structure for table new_table.
@@ -59,6 +61,7 @@ type Solution struct {
 	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
 	Version     int         `orm:"version"      json:"version"`     //
 	Lang        string      `orm:"lang"         json:"lang"`        //
+	AppId       int         `orm:"app_id"       json:"appId"`       //
 }
 
 // User is the golang structure for table user.
@@ -124,4 +127,6 @@ type App struct {
 	UpdatedTime  *gtime.Time `orm:"updated_time" json:"updatedTime"`  //
 	DeletedTime  *gtime.Time `orm:"deleted_time" json:"deletedTime"`  //
 	Version      int         `orm:"version"      json:"version"`      //
+	AppKey       string      `orm:"app_key"      json:"appKey"`       //
+	AppSecret    string      `orm:"app_secret"   json:"appSecret"`    //
 }

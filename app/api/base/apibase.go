@@ -21,7 +21,8 @@ func (p *ApiBase) Scrollpage(r *ghttp.Request) {
 func (p *ApiBase) Initaddform(r *ghttp.Request) {
 	g.Log().Debug("InitAddForm ....")
 	_ = r.GetRequestMap()
-	app.WrapSuccessRtn(nil, "ok", r)
+	rtn := p.Sve.InitAddForm(r.Context(), nil)
+	app.WrapSuccessRtn(rtn, "ok", r)
 
 }
 

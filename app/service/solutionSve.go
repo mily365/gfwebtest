@@ -128,6 +128,8 @@ func (s *solutionSve) CreateTable(ctx context.Context, i interface{}) interface{
 		rtnTmps = append(rtnTmps, "updated_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP")
 		rtnTmps = append(rtnTmps, "deleted_time timestamp  NULL DEFAULT NULL")
 		rtnTmps = append(rtnTmps, "version int(11) NOT NULL DEFAULT 0")
+		rtnTmps = append(rtnTmps, "creator_id int(11) NOT NULL DEFAULT 0")
+		rtnTmps = append(rtnTmps, "creator_name varchar(45) NULL")
 		rtnTmps = append(rtnTmps, "PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;")
 		sqlCreateStr := gstr.Join(rtnTmps, ",\n")
 		g.Dump(sqlCreateStr, "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")

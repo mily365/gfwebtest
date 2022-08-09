@@ -21,6 +21,7 @@ type ApiOperation interface {
 	Copytx(r *ghttp.Request)
 }
 type ServiceOperation interface {
+	InitAddForm(context.Context, interface{}) interface{}
 	All(context.Context, interface{}) interface{}
 	Withalls(context.Context, interface{}) interface{}
 	Scrollpage(context.Context, interface{}) interface{}

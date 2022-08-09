@@ -13,6 +13,11 @@ type ServiceBase struct {
 	Dao app.DaoOperation
 }
 
+func (s *ServiceBase) InitAddForm(ctx context.Context, i interface{}) interface{} {
+
+	return "need to impl.."
+}
+
 func (s *ServiceBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	return s.Dao.Withalls(ctx, i)
 }
