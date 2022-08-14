@@ -83,6 +83,7 @@
    userscore = "UserScore"
    codegen = "CodeGen"
    initdata = "InitData"
+   enumcatalog = "EnumCatalog"
 [model2Tbl]
    Solution="solution"
    ControlInfo="control_info"
@@ -91,6 +92,7 @@
    User = "user"
    UserDetail = "user_detail"
    UserScore = "user_score"
+   EnumCatalog="xpass_enum_catalog"
 [gfcli]
 #     [gfcli.build]
 #         name     = "free-proxy"

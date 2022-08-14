@@ -127,3 +127,9 @@ func (p *ApiBase) Copytx(r *ghttp.Request) {
 	rtn := p.Sve.Copytx(r.Context(), toCopy)
 	app.WrapSuccessRtn(rtn, "ok", r)
 }
+
+func (p *ApiBase) Findone(r *ghttp.Request) {
+	toCopy := r.GetRequestMap()
+	rtn := p.Sve.FindOne(r.Context(), toCopy)
+	app.WrapSuccessRtn(rtn, "ok", r)
+}

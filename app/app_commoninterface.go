@@ -19,8 +19,10 @@ type ApiOperation interface {
 	Updatetx(r *ghttp.Request)
 	Deletetx(r *ghttp.Request)
 	Copytx(r *ghttp.Request)
+	Findone(r *ghttp.Request)
 }
 type ServiceOperation interface {
+	FindOne(context.Context, interface{}) interface{}
 	InitAddForm(context.Context, interface{}) interface{}
 	All(context.Context, interface{}) interface{}
 	Withalls(context.Context, interface{}) interface{}
@@ -36,6 +38,7 @@ type ServiceOperation interface {
 
 // CommonOperation all service implement this interface
 type DaoOperation interface {
+	FindOne(context.Context, interface{}) interface{}
 	All(context.Context, interface{}) interface{}
 	Withalls(context.Context, interface{}) interface{}
 	Scrollpage(context.Context, interface{}) interface{}

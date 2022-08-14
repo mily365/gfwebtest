@@ -100,3 +100,6 @@ func (s *ServiceBase) Copytx(ctx context.Context, i interface{}) interface{} {
 
 	return rtn
 }
+func (s *ServiceBase) FindOne(ctx context.Context, i interface{}) interface{} {
+	return s.Dao.FindOne(ctx, i)
+}

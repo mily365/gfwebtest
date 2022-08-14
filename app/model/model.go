@@ -52,16 +52,17 @@ type Project struct {
 
 // Solution is the golang structure for table solution.
 type Solution struct {
-	Id          int         `orm:"id,primary"   json:"id"`          //
-	BizCode     string      `orm:"biz_code"     json:"bizCode"`     // 业务编码，资源编码
-	ModelName   string      `orm:"model_name"   json:"modelName"`   // 方案所描述的实体名称，后端实体名称
-	Title       string      `orm:"title"        json:"title"`       // 方案显示名称
-	CreatedTime *gtime.Time `orm:"created_time" json:"createdTime"` //
-	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
-	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
-	Version     int         `orm:"version"      json:"version"`     //
-	Lang        string      `orm:"lang"         json:"lang"`        //
-	AppId       int         `orm:"app_id"       json:"appId"`       //
+	Id           int         `orm:"id,primary"    json:"id"`           //
+	BizCode      string      `orm:"biz_code"      json:"bizCode"`      // 业务编码，资源编码
+	ModelName    string      `orm:"model_name"    json:"modelName"`    // 方案所描述的实体名称，后端实体名称
+	Title        string      `orm:"title"         json:"title"`        // 方案显示名称
+	CreatedTime  *gtime.Time `orm:"created_time"  json:"createdTime"`  //
+	UpdatedTime  *gtime.Time `orm:"updated_time"  json:"updatedTime"`  //
+	DeletedTime  *gtime.Time `orm:"deleted_time"  json:"deletedTime"`  //
+	Version      int         `orm:"version"       json:"version"`      //
+	Lang         string      `orm:"lang"          json:"lang"`         //
+	AppId        int         `orm:"app_id"        json:"appId"`        //
+	SolutionType string      `orm:"solution_type" json:"solutionType"` //
 }
 
 // User is the golang structure for table user.
@@ -129,4 +130,19 @@ type App struct {
 	Version      int         `orm:"version"      json:"version"`      //
 	AppKey       string      `orm:"app_key"      json:"appKey"`       //
 	AppSecret    string      `orm:"app_secret"   json:"appSecret"`    //
+}
+
+// EnumCatalog is the golang structure for table xpass_enum_catalog.
+type EnumCatalog struct {
+	Id          int         `orm:"id,primary"   json:"id"`          //
+	Code        string      `orm:"code"         json:"code"`        //
+	Name        string      `orm:"name"         json:"name"`        //
+	EnumItem    string      `orm:"enumItem"     json:"enumItem"`    //
+	CreatedTime *gtime.Time `orm:"created_time" json:"createdTime"` //
+	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
+	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
+	Version     int         `orm:"version"      json:"version"`     //
+	CreatorId   int         `orm:"creator_id"   json:"creatorId"`   //
+	CreatorName string      `orm:"creator_name" json:"creatorName"` //
+	AppId       int         `orm:"app_id"       json:"appId"`       //
 }

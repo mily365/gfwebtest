@@ -20,7 +20,7 @@ type DaoBase struct {
 }
 
 //返回CaseCamel的实体名称
-func getModelName(ctx context.Context, search g.Map) string {
+func GetModelName(ctx context.Context, search g.Map) string {
 	var modelName string = ""
 	//路径映射优先
 	path2ModelRegKey := ctx.Value(app.Path2ModelRegKey).(string)
@@ -59,7 +59,7 @@ func (s *DaoBase) Scrollpage(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	//main model
-	modelName := getModelName(ctx, search)
+	modelName := GetModelName(ctx, search)
 	modelKey := gstr.CaseCamelLower(modelName)
 	app.Logger.Debug("dao scrollpage....", modelKey)
 	res := app.GetEsFactory().ScrollPage(ctx, search, modelKey)
@@ -82,7 +82,7 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	rtn := new(app.SearchResult)
 	search := i.(g.Map)
 	//main model
-	modelName := getModelName(ctx, search)
+	modelName := GetModelName(ctx, search)
 	modelKey := gstr.CaseCamelLower(modelName)
 
 	//
@@ -174,7 +174,7 @@ func (s *DaoBase) Withalls(ctx context.Context, i interface{}) interface{} {
 	rtn.Rows = sp
 	return rtn
 }
-func (s *DaoBase) buildWhereSqlMapByInputMap(search g.Map, modelKey string) g.Map {
+func (s *DaoBase) BuildWhereSqlMapByInputMap(search g.Map, modelKey string) g.Map {
 	rtn := g.Map{}
 	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
 	structType := reflect.TypeOf(searchForm).Elem().Elem()
@@ -185,7 +185,7 @@ func (s *DaoBase) buildWhereSqlMapByInputMap(search g.Map, modelKey string) g.Ma
 			sf, isFind := structType.FieldByName(upperFirstCh)
 			if isFind == true {
 				tmpValue := sf.Tag.Get("orm")
-				rtn[tmpValue] = fmt.Sprintf("%s%s%s", "%", v, "%")
+				rtn[tmpValue] = fmt.Sprintf("%s", v)
 			}
 		}
 	}
@@ -234,14 +234,30 @@ func (s *DaoBase) buildOrderBy(orderByStr []string, modelKey string) []string {
 func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, mdl *gdb.Model, quickMap2 interface{}) *gdb.Model {
 	searchForm := app.TypePointerFuncFactory.GetStructPointer(modelKey)
 	structType := reflect.TypeOf(searchForm).Elem().Elem()
+	g.Dump(reflect.TypeOf(search["createdTime"]))
 	for k, v := range search {
-		if v != nil {
+		if v != nil && !gutil.IsEmpty(v) {
 			//首字母大写
 			upperFirstCh := gstr.CaseCamel(k)
 			sf, isFind := structType.FieldByName(upperFirstCh)
 			if isFind == true {
 				tmpValue := sf.Tag.Get("orm")
-				mdl.Where(tmpValue, v)
+				if gstr.Contains(k, "Time") {
+					sd := v.(g.Map)["startDate"]
+					ed := v.(g.Map)["endDate"]
+					if !gutil.IsEmpty(sd) && !gutil.IsEmpty(ed) {
+						mdl.WhereBetween(tmpValue, sd, ed)
+					} else {
+						if !gutil.IsEmpty(sd) {
+							mdl.WhereGTE(tmpValue, sd)
+						}
+						if !gutil.IsEmpty(ed) {
+							mdl.WhereLTE(tmpValue, ed)
+						}
+					}
+				} else {
+					mdl.Where(tmpValue, v)
+				}
 
 				//if tmpValue == "id" {
 				//	mdl.Where(tmpValue, v)
@@ -320,7 +336,7 @@ func (s *DaoBase) All(ctx context.Context, i interface{}) interface{} {
 
 func (s *DaoBase) Create(ctx context.Context, i interface{}) interface{} {
 	g.Log().Debug("create..............................................................")
-	modelName := getModelName(ctx, nil)
+	modelName := GetModelName(ctx, nil)
 	modelKey := gstr.CaseCamelLower(modelName)
 	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
 
@@ -365,7 +381,7 @@ func (s *DaoBase) CreateEsTx(ctx context.Context, rt interface{}, modelKey strin
 }
 
 func (s *DaoBase) Update(ctx context.Context, i interface{}) interface{} {
-	modelName := getModelName(ctx, nil)
+	modelName := GetModelName(ctx, nil)
 	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
 	_, rtn := app.ModelFactory.TxModelActions(searchTable, func(tx *gdb.TX, model *gdb.Model) (error, interface{}) {
 		um2 := model.Clone()
@@ -423,7 +439,7 @@ func (s *DaoBase) Updatetx(ctx context.Context, i interface{}, tx *gdb.TX, model
 }
 
 func (s *DaoBase) Delete(ctx context.Context, i interface{}) interface{} {
-	modelName := getModelName(ctx, nil)
+	modelName := GetModelName(ctx, nil)
 	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
 
 	um := app.ModelFactory.GetModel(searchTable)
@@ -481,4 +497,16 @@ func (s *DaoBase) CopyRelChildren(ctx context.Context, i interface{}, tx *gdb.TX
 		_, _ = relModel.TX(tx).Insert(recdMap)
 	}
 	return nil
+}
+func (s *DaoBase) FindOne(ctx context.Context, i interface{}) interface{} {
+	modelName := GetModelName(ctx, nil)
+	modelKey := gstr.CaseCamelLower(modelName)
+	searchTable := g.Config().Get(app.ModelToTbl + "." + modelName).(string)
+	um := app.ModelFactory.GetModel(searchTable)
+	rtn, err := um.FindOne(s.BuildWhereSqlMapByInputMap(i.(g.Map), modelKey))
+	if err != nil {
+		panic(err)
+	}
+	return rtn
+
 }
