@@ -2,13 +2,11 @@ package middleware
 
 import (
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gmeta"
 	"github.com/gogf/gf/util/guid"
 	"xpass/app"
-	"xpass/app/model"
-
-	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/util/gmeta"
 )
 
 var (
@@ -59,14 +57,14 @@ func (*all) Ctx(r *ghttp.Request) {
 
 	contextInfo := &app.ContextInfo{}
 	contextInfo.Session = r.Session
-	if v := r.Session.GetVar(app.SessionKeyUser); !v.IsNil() {
-		var user *model.User
-		_ = v.Struct(&user)
-		contextInfo.User = &app.ContextUser{
-			Id:   user.Id,
-			Name: user.Name,
-		}
-	}
+	//if v := r.Session.GetVar(app.SessionKeyUser); !v.IsNil() {
+	//	var user *model.User
+	//	_ = v.Struct(&user)
+	//	contextInfo.User = &app.ContextUser{
+	//		Id:   user.Id,
+	//		Name: user.Name,
+	//	}
+	//}
 	r.SetCtxVar(app.ContextInfoKey, contextInfo)
 
 	r.Middleware.Next()

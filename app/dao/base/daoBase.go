@@ -256,7 +256,12 @@ func (s *DaoBase) buildWhereLikeModelByInputMap(search g.Map, modelKey string, m
 						}
 					}
 				} else {
-					mdl.Where(tmpValue, v)
+					//mdl.Where(tmpValue, v)
+					if tmpValue == "id" {
+						mdl.Where(tmpValue, v)
+					} else {
+						mdl.WhereLike(tmpValue, fmt.Sprintf("%s%s%s", "%", v, "%"))
+					}
 				}
 
 				//if tmpValue == "id" {

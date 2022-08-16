@@ -72,48 +72,48 @@
     maxRetries = 5
 
 [path2Model]
-   solution= "Solution"
-   controlinfo="ControlInfo"
-    #派生实体，后台无表，是对后台实体的组合
-   solutionwithcontrolinfo="SolutionWithControlInfo"
-   app= "App"
-   project= "Project"
-   user = "User"
-   userdetail = "UserDetail"
-   userscore = "UserScore"
-   codegen = "CodeGen"
-   initdata = "InitData"
-   enumcatalog = "EnumCatalog"
+#   solution= "Solution"
+#   controlinfo="ControlInfo"
+#    #派生实体，后台无表，是对后台实体的组合
+#    solutionwithcontrolinfo="SolutionWithControlInfo"
+#   app= "App"
+#   project= "Project"
+#   user = "User"
+#   userdetail = "UserDetail"
+#   userscore = "UserScore"
+#    codegen = "CodeGen"
+#    initdata = "InitData"
+#   enumcatalog = "EnumCatalog"
 [model2Tbl]
-   Solution="solution"
-   ControlInfo="control_info"
-   App= "xpass_app"
-   Project="project"
-   User = "user"
-   UserDetail = "user_detail"
-   UserScore = "user_score"
-   EnumCatalog="xpass_enum_catalog"
+#   Solution="solution"
+#   ControlInfo="control_info"
+#   App= "xpass_app"
+#   Project="project"
+#   User = "user"
+#   UserDetail = "user_detail"
+#   UserScore = "user_score"
+#   EnumCatalog="xpass_enum_catalog"
 [gfcli]
-#     [gfcli.build]
-#         name     = "free-proxy"
-#         arch     = "amd64"
-#         system   = "linux"
-#         mod      = "none"
-#         cgo      = 0
-#         pack     = "config,i18n,public,template"
-#         version  = ""
-#         output   = "./bin"
-#         extra    = ""
-      [gfcli.build]
-        name=     "free-proxy"
-        arch=     "amd64"
-        system=   "darwin"
-        mod=      "none"
-        cgo=      0
-        pack=     ""
-        version=  "v1.0.0"
-        output=   "./bin"
-        extra=    ""
+     [gfcli.build]
+         name     = "free-proxy"
+         arch     = "amd64"
+         system   = "linux"
+         mod      = "none"
+         cgo      = 0
+         pack     = "config,i18n,public,template"
+         version  = ""
+         output   = "./bin"
+         extra    = ""
+#      [gfcli.build]
+#        name=     "free-proxy"
+#        arch=     "amd64"
+#        system=   "darwin"
+#        mod=      "none"
+#        cgo=      0
+#        pack=     ""
+#        version=  "v1.0.0"
+#        output=   "./bin"
+#        extra=    ""
 
     [[gfcli.gen.dao]]
         link     = "mysql:write:write@tcp(43.247.184.35:8899)/xpaas"

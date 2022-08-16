@@ -8,7 +8,22 @@ import (
 	"github.com/gogf/gf/os/gtime"
 )
 
-// ControlInfo is the golang structure for table control_info.
+// App is the golang structure for table xpass_app.
+type App struct {
+	Id           int         `orm:"id,primary"   json:"id"`           //
+	Code         string      `orm:"code"         json:"code"`         //
+	AppName      string      `orm:"appName"      json:"appName"`      //
+	ResourceJson string      `orm:"resourceJson" json:"resourceJson"` //
+	CreatedTime  *gtime.Time `orm:"created_time" json:"createdTime"`  //
+	UpdatedTime  *gtime.Time `orm:"updated_time" json:"updatedTime"`  //
+	DeletedTime  *gtime.Time `orm:"deleted_time" json:"deletedTime"`  //
+	Version      int         `orm:"version"      json:"version"`      //
+	AppKey       string      `orm:"app_key"      json:"appKey"`       //
+	AppSecret    string      `orm:"app_secret"   json:"appSecret"`    //
+	ProjectDir   string      `orm:"project_dir"  json:"projectDir"`   //
+}
+
+// ControlInfo is the golang structure for table xpass_control_info.
 type ControlInfo struct {
 	Id              int         `orm:"id,primary"       json:"id"`              //
 	Title           string      `orm:"title"            json:"title"`           //
@@ -38,19 +53,22 @@ type ControlInfo struct {
 	IsDisabled      int         `orm:"is_disabled"      json:"isDisabled"`      //
 }
 
-// NewTable is the golang structure for table new_table.
-type NewTable struct {
-	IdnewTable int `orm:"idnew_table,primary" json:"idnewTable"` //
+// EnumCatalog is the golang structure for table xpass_enum_catalog.
+type EnumCatalog struct {
+	Id          int         `orm:"id,primary"   json:"id"`          //
+	Code        string      `orm:"code"         json:"code"`        //
+	Name        string      `orm:"name"         json:"name"`        //
+	EnumItem    string      `orm:"enumItem"     json:"enumItem"`    //
+	CreatedTime *gtime.Time `orm:"created_time" json:"createdTime"` //
+	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
+	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
+	Version     int         `orm:"version"      json:"version"`     //
+	CreatorId   int         `orm:"creator_id"   json:"creatorId"`   //
+	CreatorName string      `orm:"creator_name" json:"creatorName"` //
+	AppId       int         `orm:"app_id"       json:"appId"`       //
 }
 
-// Project is the golang structure for table project.
-type Project struct {
-	Id   int    `orm:"id,primary" json:"id"`   //
-	Name string `orm:"name"       json:"name"` //
-	Age  int    `orm:"age"        json:"age"`  // 年龄
-}
-
-// Solution is the golang structure for table solution.
+// Solution is the golang structure for table xpass_solution.
 type Solution struct {
 	Id           int         `orm:"id,primary"    json:"id"`           //
 	BizCode      string      `orm:"biz_code"      json:"bizCode"`      // 业务编码，资源编码
@@ -65,84 +83,16 @@ type Solution struct {
 	SolutionType string      `orm:"solution_type" json:"solutionType"` //
 }
 
-// User is the golang structure for table user.
+// User is the golang structure for table xpass_user.
 type User struct {
-	Id        uint        `orm:"id,primary" json:"id"`        //
-	Name      string      `orm:"name"       json:"name"`      //
-	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` //
-	UpdatedAt *gtime.Time `orm:"updated_at" json:"updatedAt"` //
-	DeletedAt *gtime.Time `orm:"deleted_at" json:"deletedAt"` //
-	Version   int         `orm:"version"    json:"version"`   //
-	Age       int         `orm:"age"        json:"age"`       //
-}
-
-// User2 is the golang structure for table user2.
-type User2 struct {
-	Id        uint        `orm:"id,primary" json:"id"`        //
-	Name      string      `orm:"name"       json:"name"`      //
-	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` //
-	UpdatedAt *gtime.Time `orm:"updated_at" json:"updatedAt"` //
-	DeletedAt *gtime.Time `orm:"deleted_at" json:"deletedAt"` //
-	Version   int         `orm:"version"    json:"version"`   //
-	Age       int         `orm:"age"        json:"age"`       //
-}
-
-// User34 is the golang structure for table user34.
-type User34 struct {
-	Id    int         `orm:"id,primary" json:"id"`    //
-	Name  string      `orm:"name"       json:"name"`  //
-	Age   int         `orm:"age"        json:"age"`   //
-	Birth *gtime.Time `orm:"birth"      json:"birth"` //
-}
-
-// UserDetail is the golang structure for table user_detail.
-type UserDetail struct {
-	Uid     uint   `orm:"uid,primary" json:"uid"`     //
-	Address string `orm:"address"     json:"address"` //
-}
-
-// UserScore is the golang structure for table user_score.
-type UserScore struct {
-	Id     uint   `orm:"id,primary" json:"id"`     //
-	Uid    uint   `orm:"uid"        json:"uid"`    //
-	Score  uint   `orm:"score"      json:"score"`  //
-	Course string `orm:"course"     json:"course"` //
-}
-
-// UserTest is the golang structure for table user_test.
-type UserTest struct {
 	Id          int         `orm:"id,primary"   json:"id"`          //
+	Account     string      `orm:"account"      json:"account"`     //
 	Name        string      `orm:"name"         json:"name"`        //
-	Age         int         `orm:"age"          json:"age"`         //
-	Birth       *gtime.Time `orm:"birth"        json:"birth"`       //
-	UserTestcol string      `orm:"user_testcol" json:"userTestcol"` //
-}
-
-// App is the golang structure for table xpass_app.
-type App struct {
-	Id           int         `orm:"id,primary"   json:"id"`           //
-	Code         string      `orm:"code"         json:"code"`         //
-	AppName      string      `orm:"appName"      json:"appName"`      //
-	ResourceJson string      `orm:"resourceJson" json:"resourceJson"` //
-	CreatedTime  *gtime.Time `orm:"created_time" json:"createdTime"`  //
-	UpdatedTime  *gtime.Time `orm:"updated_time" json:"updatedTime"`  //
-	DeletedTime  *gtime.Time `orm:"deleted_time" json:"deletedTime"`  //
-	Version      int         `orm:"version"      json:"version"`      //
-	AppKey       string      `orm:"app_key"      json:"appKey"`       //
-	AppSecret    string      `orm:"app_secret"   json:"appSecret"`    //
-}
-
-// EnumCatalog is the golang structure for table xpass_enum_catalog.
-type EnumCatalog struct {
-	Id          int         `orm:"id,primary"   json:"id"`          //
-	Code        string      `orm:"code"         json:"code"`        //
-	Name        string      `orm:"name"         json:"name"`        //
-	EnumItem    string      `orm:"enumItem"     json:"enumItem"`    //
+	NickName    string      `orm:"nickName"     json:"nickName"`    //
 	CreatedTime *gtime.Time `orm:"created_time" json:"createdTime"` //
 	UpdatedTime *gtime.Time `orm:"updated_time" json:"updatedTime"` //
 	DeletedTime *gtime.Time `orm:"deleted_time" json:"deletedTime"` //
 	Version     int         `orm:"version"      json:"version"`     //
 	CreatorId   int         `orm:"creator_id"   json:"creatorId"`   //
 	CreatorName string      `orm:"creator_name" json:"creatorName"` //
-	AppId       int         `orm:"app_id"       json:"appId"`       //
 }

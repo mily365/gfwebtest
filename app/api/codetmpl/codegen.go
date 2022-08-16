@@ -152,3 +152,93 @@ func (cg *codeGenApi) Gmodel(r *ghttp.Request) {
 	}
 	app.WrapSuccessRtn("build"+target+"success.....", "ok", r)
 }
+func (cg *codeGenApi) Gcode(r *ghttp.Request) {
+	pm := r.GetRequestMap()
+	if pm["model"] == nil {
+		panic("input model param....")
+	}
+	modelName := pm["model"].(string)
+	//检查是否存在
+	modelNameConfig := g.Cfg().GetString("path2Model." + gstr.ToLower(modelName))
+	if gutil.IsEmpty(modelNameConfig) {
+		panic("please config entity name " + modelName + " in config file...........................!")
+	}
+
+	exportModelName := modelName
+	modelName = gstr.CaseCamelLower(modelName)
+
+	apiPath := g.Config().GetMap("codegen")["apiPath"].(string)
+	modelPath := g.Config().GetMap("codegen")["modelPath"].(string)
+	servicePath := g.Config().GetMap("codegen")["servicePath"].(string)
+	daoPath := g.Config().GetMap("codegen")["daoPath"].(string)
+	apifpath := apiPath + modelName + ".go"
+	modelfpath := modelPath + modelName + ".go"
+	servicefpath := servicePath + modelName + "Sve.go"
+	daofpath := daoPath + modelName + "Dao.go"
+
+	// api
+	content, err := g.View().ParseContent(context.TODO(), ApiTmpl, g.Map{
+		"path":            "`path:\"api." + modelName + "\"`",
+		"modelName":       modelName,
+		"exportModelName": exportModelName,
+	})
+	if err != nil {
+		panic(err)
+	}
+	if gfile.Exists(apifpath) == false {
+		err = gfile.PutContents(apifpath, content)
+		if err != nil {
+			g.Log().Debug(err.Error())
+		}
+
+	}
+
+	//model
+
+	content, err = g.View().ParseContent(context.TODO(), ModelTmpl, g.Map{
+		"modelName":       modelName,
+		"exportModelName": exportModelName,
+	})
+	if err != nil {
+		panic(err)
+	}
+	//
+	if gfile.Exists(modelfpath) == false {
+		err = gfile.PutContents(modelfpath, content)
+		g.Log().Debug(modelfpath)
+		if err != nil {
+			g.Log().Debug(err.Error())
+		}
+	}
+	//service
+	content, err = g.View().ParseContent(context.TODO(), ServiceTmpl, g.Map{
+		"path":            "`path:\"service." + modelName + "\"`",
+		"modelName":       modelName,
+		"exportModelName": exportModelName,
+	})
+	if err != nil {
+		panic(err)
+	}
+	if gfile.Exists(servicefpath) == false {
+		err = gfile.PutContents(servicefpath, content)
+		if err != nil {
+			g.Log().Debug(err.Error())
+		}
+	}
+	//dao
+	content, err = g.View().ParseContent(context.TODO(), DaoTmpl, g.Map{
+		"path":            "`path:\"dao." + modelName + "\"`",
+		"modelName":       modelName,
+		"exportModelName": exportModelName,
+	})
+	if err != nil {
+		panic(err)
+	}
+	if gfile.Exists(daofpath) == false {
+		err = gfile.PutContents(daofpath, content)
+		if err != nil {
+			g.Log().Debug(err.Error())
+		}
+	}
+	app.WrapSuccessRtn("build"+modelName+" reltive code success.....", "ok", r)
+}
